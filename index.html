@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criador de Peças Teatrais - Sistema Profissional de Dramaturgia</title>
+    
+    <!-- Meta tags para SEO e compartilhamento -->
+    <meta name="description" content="Sistema gratuito e profissional para criar peças teatrais completas. Desenvolvido por Alexandra Moreira.">
+    <meta name="author" content="Alexandra Moreira">
+    <meta property="og:title" content="Criador de Peças Teatrais - Sistema Profissional">
+    <meta property="og:description" content="Crie sua peça teatral completa respondendo a perguntas orientadas. Sistema gratuito desenvolvido por Alexandra Moreira.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1503095396549-807759245b35?w=1200&h=630&fit=crop">
+    
+    <!-- Bibliotecas para gerar documentos Word -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.0/docx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
+    <style>
+        /* Reset e configurações base */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        /* Banner de boas-vindas */
+        .welcome-banner {
+            background: linear-gradient(135deg, #8B0000, #CD5C5C);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .welcome-banner h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.8em;
+        }
+        
+        .welcome-banner p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        /* Avisos importantes */
+        .important-notices {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .notice-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .notice-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .notice-icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .notice-text {
+            flex-grow: 1;
+        }
+        
+        .notice-text strong {
+            display: block;
+            color: #8B0000;
+            margin-bottom: 5px;
+        }
+        
+        /* Título principal */
+        h1 {
+            color: #8B0000;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: -1px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+        
+        .author-credit {
+            text-align: center;
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 40px;
+        }
+        
+        .author-credit a {
+            color: #8B0000;
+            text-decoration: none;
+        }
+        
+        .author-credit a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Módulos */
+        .module {
+            background-color: #fafafa;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .module.active {
+            background-color: #fff;
+            box-shadow: 0 8px 25px rgba(139,0,0,0.08);
+            border-color: #8B0000;
+        }
+        
+        .module.completed {
+            border-color: #4CAF50;
+            background-color: #f8fff8;
+        }
+        
+        .module h2 {
+            color: #8B0000;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.8em;
+            font-weight: 400;
+        }
+        
+        .module-number {
+            background-color: #8B0000;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .module.completed .module-number {
+            background-color: #4CAF50;
+        }
+        
+        .module-intro {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 30px;
+            padding: 15px 20px;
+            background-color: rgba(139,0,0,0.03);
+            border-radius: 8px;
+            border-left: 3px solid #8B0000;
+        }
+        
+        /* Perguntas */
+        .question {
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s ease;
+        }
+        
+        .question:hover {
+            border-color: #8B0000;
+            box-shadow: 0 3px 10px rgba(139,0,0,0.05);
+        }
+        
+        .question label {
+            display: block;
+            margin-bottom: 12px;
+            color: #444;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+        
+        .required-mark {
+            color: #e74c3c;
+            margin-left: 5px;
+        }
+        
+        .question textarea,
+        .question input[type="text"],
+        .question select {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #fafafa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            color: #333;
+            font-family: 'Georgia', serif;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 100px;
+            transition: all 0.2s ease;
+        }
+        
+        .question textarea:focus,
+        .question input[type="text"]:focus,
+        .question select:focus {
+            outline: none;
+            border-color: #8B0000;
+            background-color: white;
+        }
+        
+        .question input[type="text"],
+        .question select {
+            min-height: auto;
+            height: 45px;
+        }
+        
+        .hint {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 0.95em;
+            color: #856404;
+        }
+        
+        /* Progresso */
+        .progress-container {
+            margin-bottom: 40px;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .progress {
+            background-color: #e0e0e0;
+            border-radius: 15px;
+            height: 25px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #8B0000, #CD5C5C);
+            height: 100%;
+            border-radius: 15px;
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        /* Botões */
+        .btn {
+            background-color: #8B0000;
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 10px 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover:not(:disabled) {
+            background-color: #a00000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139,0,0,0.3);
+        }
+        
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.6;
+        }
+        
+        .btn-secondary {
+            background-color: #666;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #555;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-success {
+            background-color: #4CAF50;
+        }
+        
+        .btn-success:hover:not(:disabled) {
+            background-color: #45a049;
+            box-shadow: 0 5px 15px rgba(76,175,80,0.3);
+        }
+        
+        .navigation {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+        
+        /* Modal de conclusão */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            animation: slideIn 0.3s ease;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #333;
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .modal-header h2 {
+            color: #8B0000;
+            margin-bottom: 10px;
+        }
+        
+        .success-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
+        /* Indicador de processamento */
+        .processing-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .processing-content {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #8B0000;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Botão de salvar progresso */
+        .save-progress-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .save-progress-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .footer a {
+            color: #8B0000;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .module {
+                padding: 20px;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 14px;
+            }
+            
+            .save-progress-btn {
+                bottom: 10px;
+                right: 10px;
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+        }
+        
+        /* Estilo de impressão */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .navigation, .progress-container, .btn, .save-progress-btn, .footer, .important-notices {
+                display: none !important;
+            }
+            
+            .module {
+                page-break-inside: avoid;
+                border: 1px solid #000;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Banner de boas-vindas -->
+        <div class="welcome-banner" id="welcomeBanner">
+            <h2>🎭 Bem-vindo ao Sistema de Criação Teatral!</h2>
+            <p>Transforme suas ideias em peças teatrais profissionais e completas</p>
+        </div>
+        
+        <!-- Avisos importantes -->
+        <div class="important-notices">
+            <div class="notice-item">
+                <span class="notice-icon">💾</span>
+                <div class="notice-text">
+                    <strong>Salvamento Automático</strong>
+                    Suas respostas são salvas automaticamente no seu navegador. Você pode fechar e voltar quando quiser!
+                </div>
+            </div>
+            <div class="notice-item">
+                <span class="notice-icon">🔒</span>
+                <div class="notice-text">
+                    <strong>Privacidade Total</strong>
+                    Suas respostas ficam apenas no seu computador. Ninguém tem acesso aos seus dados.
+                </div>
+            </div>
+            <div class="notice-item">
+                <span class="notice-icon">⚠️</span>
+                <div class="notice-text">
+                    <strong>Importante</strong>
+                    Não limpe os dados do navegador antes de baixar sua peça finalizada, ou perderá suas respostas.
+                </div>
+            </div>
+            <div class="notice-item">
+                <span class="notice-icon">📱</span>
+                <div class="notice-text">
+                    <strong>Compatibilidade</strong>
+                    Este sistema funciona melhor em computadores. Em celulares, pode haver limitações.
+                </div>
+            </div>
+        </div>
+        
+        <h1>🎭 Sistema Profissional de Dramaturgia Teatral</h1>
+        <p class="subtitle">Crie peças teatrais completas através de orientação especializada</p>
+        <p class="author-credit">Desenvolvido por <a href="#" target="_blank">Alexandra Moreira</a> - Atriz e Dramaturga</p>
+        
+        <!-- Informações de progresso -->
+        <div class="progress-container">
+            <div class="progress-info">
+                <span>Progresso Total</span>
+                <span id="progressText">0% Completo</span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+        </div>
+        
+        <div id="modules"></div>
+        
+        <div class="navigation">
+            <button class="btn btn-secondary" onclick="previousModule()" id="prevBtn" disabled>
+                ← Módulo Anterior
+            </button>
+            <button class="btn" onclick="nextModule()" id="nextBtn">
+                Próximo Módulo →
+            </button>
+            <button class="btn btn-success" onclick="showCompletionModal()" id="completeBtn" style="display:none;">
+                ✓ Finalizar e Gerar Peça
+            </button>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>Sistema de Dramaturgia Digital © 2024 | Criado com ❤️ para a comunidade teatral</p>
+            <p><a href="#" onclick="showHelpModal()">Ajuda</a> | <a href="#" onclick="showAboutModal()">Sobre</a> | <a href="#" onclick="resetProject()">Começar Novo Projeto</a></p>
+        </div>
+    </div>
+    
+    <!-- Botão flutuante de salvar -->
+    <div class="save-progress-btn" onclick="saveProgressManually()">
+        <span>💾</span>
+        <span>Salvar Progresso</span>
+    </div>
+    
+    <!-- Modal de conclusão -->
+    <div class="modal" id="completionModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('completionModal')">&times;</span>
+            <div class="modal-header">
+                <div class="success-icon">🎉</div>
+                <h2>Parabéns! Sua Peça Está Pronta!</h2>
+                <p>Você completou todos os módulos com sucesso.</p>
+            </div>
+            <div style="text-align: center;">
+                <p style="margin-bottom: 30px;">Clique no botão abaixo para gerar e baixar sua peça teatral completa em formato Word.</p>
+                <button class="btn btn-success" onclick="generateWordDocument()" style="font-size: 18px; padding: 16px 40px;">
+                    📄 Baixar Peça Completa
+                </button>
+                <br>
+                <button class="btn btn-secondary" onclick="closeModal('completionModal')" style="margin-top: 20px;">
+                    Revisar Respostas
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de processamento -->
+    <div class="processing-overlay" id="processingOverlay">
+        <div class="processing-content">
+            <div class="spinner"></div>
+            <h3 style="color: #8B0000;">Gerando sua peça teatral...</h3>
+            <p>Por favor, aguarde. Estamos criando um documento profissional com todas as suas respostas.</p>
+            <p style="font-size: 0.9em; color: #666; margin-top: 20px;">Isso pode levar alguns segundos...</p>
+        </div>
+    </div>
+    
+    <!-- Modal de ajuda -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('helpModal')">&times;</span>
+            <h2 style="color: #8B0000;">Como Usar o Sistema</h2>
+            <div style="text-align: left;">
+                <h3>1. Preencha os Módulos</h3>
+                <p>Responda às perguntas de cada módulo com calma. Não há respostas certas ou erradas.</p>
+                
+                <h3>2. Navegue Livremente</h3>
+                <p>Use os botões para avançar ou voltar entre módulos. Suas respostas são salvas automaticamente.</p>
+                
+                <h3>3. Complete no Seu Tempo</h3>
+                <p>Você pode fechar o navegador e voltar depois. Suas respostas estarão salvas.</p>
+                
+                <h3>4. Gere sua Peça</h3>
+                <p>Após preencher todos os módulos, clique em "Finalizar" para gerar sua peça completa.</p>
+                
+                <h3>Dicas Importantes:</h3>
+                <ul>
+                    <li>Seja específico nas suas respostas</li>
+                    <li>Use os hints (dicas) como orientação</li>
+                    <li>Não se preocupe com perfeição - você pode editar o documento final</li>
+                    <li>Se tiver problemas, tente usar o Google Chrome ou Firefox</li>
+                </ul>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="closeModal('helpModal')">Entendi</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal sobre -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('aboutModal')">&times;</span>
+            <h2 style="color: #8B0000;">Sobre o Sistema</h2>
+            <div style="text-align: left;">
+                <p>Este Sistema Profissional de Dramaturgia Teatral foi desenvolvido por <strong>Alexandra Moreira</strong>, atriz e dramaturga, com o objetivo de democratizar o acesso a ferramentas profissionais de criação teatral.</p>
+                
+                <h3>O que este sistema faz:</h3>
+                <ul>
+                    <li>Guia você através de 8 módulos essenciais da criação teatral</li>
+                    <li>Organiza suas ideias de forma profissional</li>
+                    <li>Gera um documento Word completo com sua peça</li>
+                    <li>Preserva sua privacidade - tudo fica no seu computador</li>
+                </ul>
+                
+                <h3>Para quem é:</h3>
+                <ul>
+                    <li>Dramaturgos iniciantes e experientes</li>
+                    <li>Professores de teatro</li>
+                    <li>Estudantes de artes cênicas</li>
+                    <li>Qualquer pessoa com uma história para contar</li>
+                </ul>
+                
+                <p style="margin-top: 20px;"><em>"O teatro nasce no momento em que o humano descobre que pode observar-se a si mesmo."</em> - Augusto Boal</p>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="closeModal('aboutModal')">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração dos módulos completos
+        const modules = [
+            {
+                id: 'essencia',
+                title: 'Essência e Propósito',
+                intro: 'Vamos começar pela alma da sua peça. Estas perguntas fundamentais definirão o DNA do seu espetáculo e guiarão todas as decisões artísticas posteriores.',
+                questions: [
+                    {
+                        id: 'titulo_provisorio',
+                        label: 'Título provisório da peça:',
+                        type: 'text',
+                        required: true,
+                        hint: 'Pode ser alterado depois. Use algo que capture a essência da sua história.'
+                    },
+                    {
+                        id: 'fagulha',
+                        label: 'Qual é a fagulha inicial da sua peça?',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Descreva a imagem, frase, conflito ou emoção que originou esta ideia. Exemplo: "Uma mulher idosa dançando sozinha em uma cozinha vazia".'
+                    },
+                    {
+                        id: 'pergunta_central',
+                        label: 'Que pergunta central sua peça pretende explorar?',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Pense em questões universais: "O que nos torna humanos?" ou "Como o passado molda nosso presente?"'
+                    },
+                    {
+                        id: 'transformacao',
+                        label: 'Qual transformação você deseja provocar no público?',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Como você quer que o público saia diferente de como entrou? Considere mudanças emocionais, intelectuais ou de perspectiva.'
+                    },
+                    {
+                        id: 'publico_alvo',
+                        label: 'Descreva seu público-alvo:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Idade, contexto sociocultural, experiência teatral, interesses específicos.'
+                    },
+                    {
+                        id: 'espaco',
+                        label: 'Tipo de espaço teatral:',
+                        type: 'select',
+                        required: true,
+                        options: ['Teatro tradicional (palco italiano)', 'Teatro arena', 'Espaço alternativo', 'Teatro de rua', 'Espaço escolar', 'Site-specific', 'Black box', 'Outro']
+                    },
+                    {
+                        id: 'duracao',
+                        label: 'Duração aproximada:',
+                        type: 'select',
+                        required: true,
+                        options: ['30-45 minutos', '60 minutos', '75 minutos', '90 minutos', '2 horas', 'Mais de 2 horas']
+                    }
+                ]
+            },
+            {
+                id: 'estrutura',
+                title: 'Estrutura Narrativa e Personagens',
+                intro: 'Agora vamos construir a arquitetura dramática da sua peça e dar vida aos personagens que contarão esta história.',
+                questions: [
+                    {
+                        id: 'sinopse',
+                        label: 'Sinopse da peça (máximo 10 linhas):',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Resuma a história principal sem revelar o final. Foque no conflito central e no que está em jogo.'
+                    },
+                    {
+                        id: 'estrutura_narrativa',
+                        label: 'Estrutura narrativa:',
+                        type: 'select',
+                        required: true,
+                        options: ['Linear cronológica', 'Fragmentada/não-linear', 'Circular (termina onde começou)', 'Episódica', 'Stream of consciousness', 'Múltiplas perspectivas', 'Meta-teatral', 'Outra']
+                    },
+                    {
+                        id: 'num_atos',
+                        label: 'Divisão em atos/cenas:',
+                        type: 'text',
+                        required: true,
+                        hint: 'Exemplo: "3 atos" ou "7 cenas curtas" ou "Ato único com 5 quadros"'
+                    },
+                    {
+                        id: 'ponto_virada',
+                        label: 'Descreva o ponto de virada principal (clímax):',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'O momento em que tudo muda irreversivelmente. Seja específico sobre o que acontece e por quê.'
+                    },
+                    {
+                        id: 'personagens',
+                        label: 'Liste e descreva os personagens principais:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Para cada personagem inclua: Nome, idade, motivação principal, conflito interno, relação com outros personagens.'
+                    },
+                    {
+                        id: 'antagonista',
+                        label: 'Quem ou o que é o antagonista?',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Pode ser outro personagem, uma situação, a sociedade, ou um conflito interno do protagonista.'
+                    },
+                    {
+                        id: 'linguagem',
+                        label: 'Descreva a linguagem de cada personagem:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Registro formal/informal, vocabulário específico, ritmo de fala, vícios de linguagem, sotaque.'
+                    },
+                    {
+                        id: 'gestualidade',
+                        label: 'Gestos e características físicas dos personagens:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Maneirismos, forma de andar, tiques, posturas características que definem cada personagem.'
+                    }
+                ]
+            },
+            {
+                id: 'cenografia',
+                title: 'Universo Cênico e Cenografia',
+                intro: 'O espaço cênico é um personagem silencioso. Vamos criar o mundo visual onde sua história se desenrolará.',
+                questions: [
+                    {
+                        id: 'epoca_local',
+                        label: 'Época e local onde se passa a história:',
+                        type: 'text',
+                        required: true,
+                        hint: 'Seja específico: "Lisboa, 1974" ou "Futuro distópico, 2080" ou "Atemporal"'
+                    },
+                    {
+                        id: 'num_ambientes',
+                        label: 'Quantos ambientes/espaços diferentes?',
+                        type: 'text',
+                        required: true,
+                        hint: 'Liste-os brevemente. Ex: "3 - sala de estar, parque, quarto de hospital"'
+                    },
+                    {
+                        id: 'atmosfera',
+                        label: 'Atmosfera visual dominante:',
+                        type: 'select',
+                        required: true,
+                        options: ['Realista/naturalista', 'Onírica/surreal', 'Minimalista', 'Expressionista', 'Abstrata', 'Épica', 'Intimista', 'Híbrida']
+                    },
+                    {
+                        id: 'paleta_cores_cenografia',
+                        label: 'Paleta de cores da cenografia:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Descreva as cores predominantes e o que elas significam para a narrativa.'
+                    },
+                    {
+                        id: 'elementos_essenciais',
+                        label: 'Elementos cenográficos absolutamente essenciais:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Liste apenas elementos dramaturgicamente necessários, não decorativos. O que não pode faltar?'
+                    },
+                    {
+                        id: 'transformacao_espaco',
+                        label: 'Como o espaço se transforma durante a peça?',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Mudanças físicas, simbólicas, degradação, revelações espaciais ao longo da história.'
+                    },
+                    {
+                        id: 'objetos_cenicos',
+                        label: 'Objetos cênicos com função dramatúrgica:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Objetos que participam da ação, não apenas decoram. Ex: "Uma carta que revela um segredo"'
+                    }
+                ]
+            },
+            {
+                id: 'iluminacao',
+                title: 'Luz e Sombra',
+                intro: 'A luz é dramaturgia visual pura. Ela revela, esconde, transforma e emociona. Vamos pintar com luz.',
+                questions: [
+                    {
+                        id: 'conceito_luz',
+                        label: 'Conceito geral da iluminação:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'A filosofia da luz no seu espetáculo: naturalista, expressiva, minimalista, simbólica.'
+                    },
+                    {
+                        id: 'paleta_cores',
+                        label: 'Paleta de cores luminosas por ato/cena:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Exemplo: "Ato 1: âmbares quentes (nostalgia) / Ato 2: azuis frios (solidão)"'
+                    },
+                    {
+                        id: 'tempo_luz',
+                        label: 'Como a luz marca a passagem do tempo?',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Amanhecer, entardecer, estações do ano, passagem de anos, envelhecimento.'
+                    },
+                    {
+                        id: 'momentos_escuridao',
+                        label: 'Momentos de escuridão dramatúrgica:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Quando e por que usar o escuro como elemento narrativo? O que o escuro revela?'
+                    },
+                    {
+                        id: 'revelacoes_luz',
+                        label: 'Momentos de revelação através da luz:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Quando a luz revela algo escondido, literal ou metaforicamente.'
+                    }
+                ]
+            },
+            {
+                id: 'som',
+                title: 'Paisagem Sonora',
+                intro: 'O som cria atmosferas invisíveis e desperta memórias profundas. Vamos construir o universo auditivo do seu espetáculo.',
+                questions: [
+                    {
+                        id: 'conceito_sonoro',
+                        label: 'Conceito geral da paisagem sonora:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'O papel do som na sua peça: realista, abstrato, musical, minimalista, imersivo.'
+                    },
+                    {
+                        id: 'estilo_musical',
+                        label: 'Estilo musical e instrumentação:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Época, gênero, instrumentos específicos, referências musicais, compositores.'
+                    },
+                    {
+                        id: 'musica_diegetica',
+                        label: 'Tipo de música/som:',
+                        type: 'select',
+                        required: true,
+                        options: ['Apenas diegética (personagens ouvem)', 'Apenas extra-diegética (só público ouve)', 'Mista (ambas)', 'Sem música', 'Soundscape abstrato']
+                    },
+                    {
+                        id: 'sons_ambiente',
+                        label: 'Sons ambientes para cada espaço/cena:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Sons que criam a atmosfera: vento, cidade, mar, silêncio, respirações.'
+                    },
+                    {
+                        id: 'silencios',
+                        label: 'Onde e como usar o silêncio?',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'O silêncio também é dramaturgia. Quando ele é essencial e o que comunica?'
+                    }
+                ]
+            },
+            {
+                id: 'movimento',
+                title: 'Corpo, Movimento e Figurino',
+                intro: 'O corpo do ator é instrumento e mensagem. O figurino é a pele do personagem. Vamos definir a linguagem física e visual.',
+                questions: [
+                    {
+                        id: 'estilo_movimento',
+                        label: 'Estilo de movimentação:',
+                        type: 'select',
+                        required: true,
+                        options: ['Naturalista/cotidiano', 'Estilizado', 'Coreografado', 'Físico/acrobático', 'Dança-teatro', 'Commedia dell\'arte', 'Butoh', 'Misto']
+                    },
+                    {
+                        id: 'momentos_coreografados',
+                        label: 'Momentos coreografados ou de movimento coral:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Cenas com movimento sincronizado, danças, rituais, sequências físicas.'
+                    },
+                    {
+                        id: 'conceito_figurino',
+                        label: 'Conceito geral do figurino:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Época, estilo, nível de realismo ou estilização, função narrativa do figurino.'
+                    },
+                    {
+                        id: 'figurino_personagens',
+                        label: 'Como o figurino conta a história de cada personagem?',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Evolução, degradação, transformação, status social, estado emocional através das roupas.'
+                    },
+                    {
+                        id: 'paleta_texturas',
+                        label: 'Paleta de cores e texturas do figurino:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Cores por personagem, texturas (áspero, suave, brilhante), significados simbólicos.'
+                    }
+                ]
+            },
+            {
+                id: 'tecnicos',
+                title: 'Elementos Técnicos e Produção',
+                intro: 'Detalhes técnicos e de produção que darão suporte à sua visão artística.',
+                questions: [
+                    {
+                        id: 'multimidia',
+                        label: 'Uso de tecnologia/multimídia:',
+                        type: 'select',
+                        required: true,
+                        options: ['Não', 'Projeções simples', 'Vídeo pré-gravado', 'Vídeo ao vivo', 'Mapping', 'Realidade aumentada', 'Interatividade digital', 'Outro']
+                    },
+                    {
+                        id: 'maquiagem',
+                        label: 'Tipo de maquiagem:',
+                        type: 'select',
+                        required: true,
+                        options: ['Realista/natural', 'Teatral clássica', 'Expressiva/artística', 'Fantasia/caracterização', 'Envelhecimento', 'Mínima', 'Body painting']
+                    },
+                    {
+                        id: 'efeitos_especiais',
+                        label: 'Efeitos especiais necessários:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Fumaça, fogo, chuva, voo, sangue cenográfico, quebra de objetos, etc.'
+                    },
+                    {
+                        id: 'necessidades_tecnicas',
+                        label: 'Necessidades técnicas especiais:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Equipamentos específicos, estruturas especiais, requisitos de segurança.'
+                    },
+                    {
+                        id: 'equipe_minima',
+                        label: 'Equipe técnica mínima necessária:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Número de técnicos, especialidades essenciais (luz, som, contra-regra, etc.)'
+                    }
+                ]
+            },
+            {
+                id: 'sintese',
+                title: 'Síntese e Visão Final',
+                intro: 'Vamos integrar todos os elementos em uma visão coesa e preparar seu projeto para produção.',
+                questions: [
+                    {
+                        id: 'experiencia_sensorial',
+                        label: 'Em uma frase, qual é a experiência sensorial completa?',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Sintetize o impacto total: visual, sonoro, emocional. O que o público vive?'
+                    },
+                    {
+                        id: 'imagem_final',
+                        label: 'Descreva a imagem final que fica com o público:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'A última cena, o blackout final, o que permanece na memória e no coração.'
+                    },
+                    {
+                        id: 'tres_palavras',
+                        label: 'Três palavras que definem sua peça:',
+                        type: 'text',
+                        required: true,
+                        hint: 'Exemplo: "Visceral, Poético, Transformador"'
+                    },
+                    {
+                        id: 'referencia_artistica',
+                        label: 'Referências artísticas (filmes, peças, pinturas, etc.):',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'O que inspira a estética e o tom da sua peça?'
+                    },
+                    {
+                        id: 'mensagem_equipe',
+                        label: 'Mensagem para a futura equipe de produção:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'O que é importante que atores, diretores e técnicos saibam sobre sua visão?'
+                    }
+                ]
+            }
+        ];
+
+        // Variáveis globais
+        let currentModule = 0;
+        let projectData = {};
+        const STORAGE_KEY = 'teatroProject_v2';
+
+        // Funções de inicialização
+        function init() {
+            loadProjectData();
+            renderModules();
+            updateProgress();
+            updateNavigation();
+            checkFirstVisit();
+            
+            // Auto-save a cada mudança
+            document.addEventListener('change', function() {
+                saveProjectData();
+            });
+        }
+
+        // Verificar primeira visita
+        function checkFirstVisit() {
+            if (!localStorage.getItem('teatroVisited_v2')) {
+                localStorage.setItem('teatroVisited_v2', 'true');
+            } else {
+                document.getElementById('welcomeBanner').style.display = 'none';
+            }
+        }
+
+        // Carregar dados do projeto
+        function loadProjectData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    projectData = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Erro ao carregar dados:', e);
+                    projectData = {};
+                }
+            }
+        }
+
+        // Salvar dados do projeto
+        function saveProjectData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(projectData));
+                showSaveNotification();
+            } catch (e) {
+                console.error('Erro ao salvar:', e);
+                alert('Erro ao salvar dados. Verifique o espaço disponível no navegador.');
+            }
+        }
+
+        // Mostrar notificação de salvamento
+        function showSaveNotification() {
+            const btn = document.querySelector('.save-progress-btn');
+            btn.style.backgroundColor = '#4CAF50';
+            setTimeout(() => {
+                btn.style.backgroundColor = '#4CAF50';
+            }, 1000);
+        }
+
+        // Renderizar módulos
+        function renderModules() {
+            const container = document.getElementById('modules');
+            container.innerHTML = '';
+            
+            modules.forEach((module, index) => {
+                const moduleDiv = document.createElement('div');
+                moduleDiv.className = `module ${index === currentModule ? 'active' : ''} ${isModuleComplete(index) ? 'completed' : ''}`;
+                moduleDiv.id = `module-${index}`;
+                moduleDiv.style.display = index === currentModule ? 'block' : 'none';
+                
+                moduleDiv.innerHTML = `
+                    <h2>
+                        <span class="module-number">${index + 1}</span>
+                        ${module.title}
+                    </h2>
+                    <div class="module-intro">${module.intro}</div>
+                    ${renderQuestions(module.questions, module.id)}
+                `;
+                
+                container.appendChild(moduleDiv);
+            });
+        }
+
+        // Renderizar perguntas
+        function renderQuestions(questions, moduleId) {
+            return questions.map(q => {
+                const savedValue = projectData[q.id] || '';
+                const requiredMark = q.required ? '<span class="required-mark">*</span>' : '';
+                let inputHtml = '';
+                
+                switch(q.type) {
+                    case 'textarea':
+                        inputHtml = `<textarea 
+                            id="${q.id}" 
+                            onchange="saveAnswer('${q.id}')"
+                            placeholder="Digite sua resposta aqui..."
+                            ${q.required ? 'required' : ''}>${savedValue}</textarea>`;
+                        break;
+                    case 'text':
+                        inputHtml = `<input 
+                            type="text" 
+                            id="${q.id}" 
+                            value="${savedValue}" 
+                            onchange="saveAnswer('${q.id}')"
+                            placeholder="Digite aqui..."
+                            ${q.required ? 'required' : ''}>`;
+                        break;
+                    case 'select':
+                        inputHtml = `
+                            <select id="${q.id}" onchange="saveAnswer('${q.id}')" ${q.required ? 'required' : ''}>
+                                <option value="">Selecione uma opção...</option>
+                                ${q.options.map(opt => 
+                                    `<option value="${opt}" ${savedValue === opt ? 'selected' : ''}>${opt}</option>`
+                                ).join('')}
+                            </select>
+                        `;
+                        break;
+                }
+                
+                return `
+                    <div class="question">
+                        <label for="${q.id}">${q.label}${requiredMark}</label>
+                        ${q.hint ? `<div class="hint">💡 ${q.hint}</div>` : ''}
+                        ${inputHtml}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Salvar resposta
+        function saveAnswer(fieldId) {
+            const element = document.getElementById(fieldId);
+            projectData[fieldId] = element.value;
+            saveProjectData();
+            updateProgress();
+            updateNavigation();
+        }
+
+        // Verificar se módulo está completo
+        function isModuleComplete(moduleIndex) {
+            const module = modules[moduleIndex];
+            // Verifica apenas campos obrigatórios
+            return module.questions
+                .filter(q => q.required)
+                .every(q => projectData[q.id] && projectData[q.id].trim() !== '');
+        }
+
+        // Verificar se todos os módulos estão completos
+        function areAllModulesComplete() {
+            return modules.every((_, index) => isModuleComplete(index));
+        }
+
+        // Atualizar progresso
+        function updateProgress() {
+            const totalRequired = modules.reduce((sum, m) => 
+                sum + m.questions.filter(q => q.required).length, 0
+            );
+            const answeredRequired = modules.reduce((sum, m) => 
+                sum + m.questions.filter(q => q.required && projectData[q.id] && projectData[q.id].trim() !== '').length, 0
+            );
+            
+            const progress = totalRequired > 0 ? Math.round((answeredRequired / totalRequired) * 100) : 0;
+            
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            progressBar.style.width = `${progress}%`;
+            progressBar.textContent = `${progress}%`;
+            progressText.textContent = `${progress}% Completo`;
+            
+            // Mostrar botão de conclusão quando apropriado
+            if (progress >= 80 || areAllModulesComplete()) {
+                document.getElementById('completeBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('completeBtn').style.display = 'none';
+            }
+        }
+
+        // Navegação entre módulos
+        function nextModule() {
+            if (currentModule < modules.length - 1) {
+                document.getElementById(`module-${currentModule}`).style.display = 'none';
+                currentModule++;
+                document.getElementById(`module-${currentModule}`).style.display = 'block';
+                updateNavigation();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function previousModule() {
+            if (currentModule > 0) {
+                document.getElementById(`module-${currentModule}`).style.display = 'none';
+                currentModule--;
+                document.getElementById(`module-${currentModule}`).style.display = 'block';
+                updateNavigation();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').disabled = currentModule === 0;
+            document.getElementById('nextBtn').disabled = currentModule === modules.length - 1;
+            
+            // Atualizar visual dos módulos
+            document.querySelectorAll('.module').forEach((mod, idx) => {
+                mod.classList.toggle('active', idx === currentModule);
+                mod.classList.toggle('completed', isModuleComplete(idx));
+            });
+        }
+
+        // Mostrar modal de conclusão
+        function showCompletionModal() {
+            if (!areAllModulesComplete()) {
+                alert('Por favor, complete todos os campos obrigatórios (marcados com *) antes de gerar sua peça.');
+                return;
+            }
+            document.getElementById('completionModal').style.display = 'block';
+        }
+
+        // Fechar modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Modais de ajuda e sobre
+        function showHelpModal() {
+            document.getElementById('helpModal').style.display = 'block';
+        }
+
+        function showAboutModal() {
+            document.getElementById('aboutModal').style.display = 'block';
+        }
+
+        // Resetar projeto
+        function resetProject() {
+            if (confirm('Tem certeza que deseja começar um novo projeto? Todas as respostas atuais serão perdidas.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                projectData = {};
+                currentModule = 0;
+                location.reload();
+            }
+        }
+
+        // Salvar progresso manualmente
+        function saveProgressManually() {
+            saveProjectData();
+            alert('Seu progresso foi salvo com sucesso!');
+        }
+
+        // Gerar documento Word
+        async function generateWordDocument() {
+            // Mostrar indicador de processamento
+            document.getElementById('processingOverlay').style.display = 'flex';
+            
+            try {
+                // Aguardar um pouco para garantir que o overlay seja mostrado
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
+                
+                const sections = [];
+                
+                // Capa
+                sections.push(
+                    new Paragraph({
+                        text: projectData.titulo_provisorio || "Peça Teatral Sem Título",
+                        heading: HeadingLevel.TITLE,
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 400 }
+                    }),
+                    new Paragraph({
+                        text: "Projeto Completo de Dramaturgia",
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 200 }
+                    }),
+                    new Paragraph({
+                        text: "Sistema desenvolvido por Alexandra Moreira",
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 100 }
+                    }),
+                    new Paragraph({
+                        text: `Data: ${new Date().toLocaleDateString('pt-BR')}`,
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 800 }
+                    })
+                );
+                
+                // Índice
+                sections.push(
+                    new Paragraph({
+                        text: "ÍNDICE",
+                        heading: HeadingLevel.HEADING_1,
+                        spacing: { before: 400, after: 300 }
+                    })
+                );
+                
+                modules.forEach((module, index) => {
+                    sections.push(
+                        new Paragraph({
+                            text: `${index + 1}. ${module.title}`,
+                            spacing: { after: 100 }
+                        })
+                    );
+                });
+                
+                sections.push(
+                    new Paragraph({
+                        text: "",
+                        spacing: { after: 400 }
+                    })
+                );
+                
+                // Conteúdo de cada módulo
+                modules.forEach((module, moduleIndex) => {
+                    // Título do módulo
+                    sections.push(
+                        new Paragraph({
+                            text: `${moduleIndex + 1}. ${module.title.toUpperCase()}`,
+                            heading: HeadingLevel.HEADING_1,
+                            spacing: { before: 400, after: 200 }
+                        })
+                    );
+                    
+                    // Perguntas e respostas
+                    module.questions.forEach(question => {
+                        const answer = projectData[question.id];
+                        
+                        if (answer && answer.trim()) {
+                            sections.push(
+                                new Paragraph({
+                                    text: question.label.replace(/[*:]/g, ''),
+                                    heading: HeadingLevel.HEADING_2,
+                                    spacing: { before: 200, after: 100 }
+                                }),
+                                new Paragraph({
+                                    text: answer,
+                                    spacing: { after: 200 }
+                                })
+                            );
+                        }
+                    });
+                });
+                
+                // Seção adicional: Notas de Produção
+                sections.push(
+                    new Paragraph({
+                        text: "NOTAS DE PRODUÇÃO",
+                        heading: HeadingLevel.HEADING_1,
+                        spacing: { before: 600, after: 200 }
+                    }),
+                    new Paragraph({
+                        text: "Este documento foi gerado automaticamente pelo Sistema Profissional de Dramaturgia Teatral.",
+                        spacing: { after: 100 }
+                    }),
+                    new Paragraph({
+                        text: "Todas as informações aqui contidas são de propriedade intelectual do autor e devem ser tratadas com confidencialidade.",
+                        spacing: { after: 200 }
+                    })
+                );
+                
+                // Criar o documento
+                const doc = new Document({
+                    sections: [{
+                        properties: {},
+                        children: sections
+                    }]
+                });
+                
+                // Gerar blob e fazer download
+                const blob = await Packer.toBlob(doc);
+                
+                // Criar nome do arquivo
+                const fileName = projectData.titulo_provisorio 
+                    ? `${projectData.titulo_provisorio.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${new Date().toISOString().split('T')[0]}.docx`
+                    : `peca_teatral_${new Date().toISOString().split('T')[0]}.docx`;
+                
+                // Fazer download
+                saveAs(blob, fileName);
+                
+                // Esconder overlay e mostrar sucesso
+                document.getElementById('processingOverlay').style.display = 'none';
+                
+                // Mensagem de sucesso
+                alert('Sua peça teatral foi gerada com sucesso! O download começará automaticamente.\n\nObrigado por usar nosso sistema!');
+                
+                // Fechar modal
+                closeModal('completionModal');
+                
+            } catch (error) {
+                console.error('Erro ao gerar documento:', error);
+                document.getElementById('processingOverlay').style.display = 'none';
+                
+                // Mensagem de erro mais específica
+                let errorMessage = 'Ocorreu um erro ao gerar o documento. ';
+                
+                if (!projectData.titulo_provisorio) {
+                    errorMessage += 'Por favor, verifique se preencheu o título da peça.';
+                } else {
+                    errorMessage += 'Por favor, verifique se preencheu todos os campos obrigatórios e tente novamente.';
+                }
+                
+                alert(errorMessage);
+            }
+        }
+
+        // Fechar modais ao clicar fora
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Inicializar quando a página carregar
+        window.onload = init;
+    </script>
+</body>
+</html>
