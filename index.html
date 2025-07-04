@@ -665,57 +665,309 @@
             }
         });
 
-        // Configuração dos módulos (simplificada para exemplo)
+        // Configuração completa dos 8 módulos
         const modules = [
             {
                 id: 'essencia',
                 title: 'Essência e Propósito',
-                intro: 'Vamos começar pela alma da sua peça.',
+                intro: 'Vamos começar pela alma da sua peça. Estas perguntas fundamentais definirão o DNA do seu espetáculo.',
                 questions: [
                     {
                         id: 'titulo_provisorio',
                         label: 'Título provisório da peça:',
                         type: 'text',
                         required: true,
-                        hint: 'Pode ser alterado depois.'
+                        hint: 'Pode ser alterado depois. Use algo que capture a essência.'
                     },
                     {
                         id: 'fagulha',
                         label: 'Qual é a fagulha inicial da sua peça?',
                         type: 'textarea',
                         required: true,
-                        hint: 'A ideia ou imagem que originou tudo.'
+                        hint: 'Descreva a imagem, frase, conflito ou emoção que originou esta ideia.'
+                    },
+                    {
+                        id: 'pergunta_central',
+                        label: 'Que pergunta central sua peça pretende explorar?',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Pense em questões universais que ressoem com o público.'
+                    },
+                    {
+                        id: 'transformacao',
+                        label: 'Qual transformação você deseja provocar no público?',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Como você quer que o público saia diferente de como entrou?'
+                    },
+                    {
+                        id: 'publico_alvo',
+                        label: 'Descreva seu público-alvo:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Idade, contexto sociocultural, experiência teatral.'
+                    },
+                    {
+                        id: 'espaco',
+                        label: 'Tipo de espaço teatral:',
+                        type: 'select',
+                        required: true,
+                        options: ['Teatro tradicional', 'Teatro arena', 'Espaço alternativo', 'Teatro de rua', 'Black box', 'Outro']
+                    },
+                    {
+                        id: 'duracao',
+                        label: 'Duração aproximada:',
+                        type: 'select',
+                        required: true,
+                        options: ['30-45 minutos', '60 minutos', '90 minutos', '2 horas', 'Mais de 2 horas']
                     }
                 ]
             },
             {
                 id: 'estrutura',
-                title: 'Estrutura Narrativa',
-                intro: 'Defina a arquitetura da sua história.',
+                title: 'Estrutura Narrativa e Personagens',
+                intro: 'Agora vamos construir a arquitetura dramática da sua peça e dar vida aos personagens.',
                 questions: [
                     {
                         id: 'sinopse',
-                        label: 'Sinopse:',
+                        label: 'Sinopse da peça:',
                         type: 'textarea',
                         required: true,
-                        hint: 'Resumo da história.'
+                        hint: 'Resuma a história principal sem revelar o final.'
+                    },
+                    {
+                        id: 'estrutura_narrativa',
+                        label: 'Estrutura narrativa:',
+                        type: 'select',
+                        required: true,
+                        options: ['Linear', 'Não-linear', 'Circular', 'Episódica', 'Meta-teatral', 'Outra']
+                    },
+                    {
+                        id: 'num_atos',
+                        label: 'Divisão em atos/cenas:',
+                        type: 'text',
+                        required: true,
+                        hint: 'Exemplo: "3 atos" ou "7 cenas curtas"'
+                    },
+                    {
+                        id: 'ponto_virada',
+                        label: 'Descreva o ponto de virada principal:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'O momento em que tudo muda irreversivelmente.'
+                    },
+                    {
+                        id: 'personagens',
+                        label: 'Liste e descreva os personagens principais:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Nome, idade, motivação, conflito interno.'
+                    },
+                    {
+                        id: 'antagonista',
+                        label: 'Quem ou o que é o antagonista?',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Pode ser uma pessoa, situação ou conflito interno.'
+                    },
+                    {
+                        id: 'linguagem',
+                        label: 'Linguagem de cada personagem:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Vocabulário, ritmo de fala, vícios de linguagem.'
                     }
                 ]
             },
             {
-                id: 'personagens',
-                title: 'Personagens',
-                intro: 'Dê vida aos seus personagens.',
+                id: 'cenografia',
+                title: 'Universo Cênico e Cenografia',
+                intro: 'O espaço cênico é um personagem silencioso. Vamos criar o mundo visual.',
                 questions: [
                     {
-                        id: 'protagonista',
-                        label: 'Protagonista:',
+                        id: 'epoca_local',
+                        label: 'Época e local:',
+                        type: 'text',
+                        required: true,
+                        hint: 'Ex: "Lisboa, 1974" ou "Futuro distópico"'
+                    },
+                    {
+                        id: 'num_ambientes',
+                        label: 'Quantos ambientes?',
+                        type: 'text',
+                        required: true,
+                        hint: 'Liste-os brevemente.'
+                    },
+                    {
+                        id: 'atmosfera',
+                        label: 'Atmosfera visual:',
+                        type: 'select',
+                        required: true,
+                        options: ['Realista', 'Onírica', 'Minimalista', 'Expressionista', 'Abstrata', 'Híbrida']
+                    },
+                    {
+                        id: 'elementos_essenciais',
+                        label: 'Elementos cenográficos essenciais:',
                         type: 'textarea',
-                        required: true
+                        required: true,
+                        hint: 'Apenas o dramaturgicamente necessário.'
+                    },
+                    {
+                        id: 'objetos_cenicos',
+                        label: 'Objetos cênicos importantes:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Objetos que participam da ação.'
+                    }
+                ]
+            },
+            {
+                id: 'iluminacao',
+                title: 'Luz e Sombra',
+                intro: 'A luz é dramaturgia visual. Vamos pintar com luz.',
+                questions: [
+                    {
+                        id: 'conceito_luz',
+                        label: 'Conceito geral da iluminação:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Naturalista, expressiva, minimalista?'
+                    },
+                    {
+                        id: 'paleta_cores',
+                        label: 'Paleta de cores luminosas:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Cores e emoções por ato/cena.'
+                    },
+                    {
+                        id: 'momentos_luz',
+                        label: 'Momentos especiais de luz:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Revelações, transformações.'
+                    }
+                ]
+            },
+            {
+                id: 'som',
+                title: 'Paisagem Sonora',
+                intro: 'O som cria atmosferas invisíveis. Vamos construir o universo auditivo.',
+                questions: [
+                    {
+                        id: 'conceito_sonoro',
+                        label: 'Conceito sonoro geral:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Realista, abstrato, musical?'
+                    },
+                    {
+                        id: 'estilo_musical',
+                        label: 'Estilo musical:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Gênero, instrumentos, referências.'
+                    },
+                    {
+                        id: 'sons_ambiente',
+                        label: 'Sons ambientes:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Sons que criam atmosfera.'
+                    },
+                    {
+                        id: 'silencios',
+                        label: 'Uso do silêncio:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Quando o silêncio é essencial?'
+                    }
+                ]
+            },
+            {
+                id: 'movimento',
+                title: 'Corpo, Movimento e Figurino',
+                intro: 'O corpo do ator é instrumento. O figurino é a pele do personagem.',
+                questions: [
+                    {
+                        id: 'estilo_movimento',
+                        label: 'Estilo de movimentação:',
+                        type: 'select',
+                        required: true,
+                        options: ['Naturalista', 'Estilizado', 'Coreografado', 'Físico', 'Misto']
+                    },
+                    {
+                        id: 'conceito_figurino',
+                        label: 'Conceito de figurino:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Época, estilo, função narrativa.'
+                    },
+                    {
+                        id: 'figurino_personagens',
+                        label: 'Figurino por personagem:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Como o figurino conta a história?'
+                    }
+                ]
+            },
+            {
+                id: 'tecnicos',
+                title: 'Elementos Técnicos',
+                intro: 'Detalhes técnicos que darão suporte à visão artística.',
+                questions: [
+                    {
+                        id: 'multimidia',
+                        label: 'Uso de multimídia:',
+                        type: 'select',
+                        required: true,
+                        options: ['Não', 'Projeções simples', 'Vídeo', 'Outro']
+                    },
+                    {
+                        id: 'maquiagem',
+                        label: 'Tipo de maquiagem:',
+                        type: 'select',
+                        required: true,
+                        options: ['Natural', 'Teatral', 'Caracterização', 'Fantasia']
+                    },
+                    {
+                        id: 'efeitos_especiais',
+                        label: 'Efeitos especiais:',
+                        type: 'textarea',
+                        required: false,
+                        hint: 'Fumaça, fogo, chuva, etc.'
+                    }
+                ]
+            },
+            {
+                id: 'sintese',
+                title: 'Síntese Final',
+                intro: 'Vamos integrar todos os elementos numa visão coesa.',
+                questions: [
+                    {
+                        id: 'experiencia_sensorial',
+                        label: 'Experiência sensorial completa:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'Sintetize em uma frase.'
+                    },
+                    {
+                        id: 'imagem_final',
+                        label: 'Imagem final para o público:',
+                        type: 'textarea',
+                        required: true,
+                        hint: 'O que fica na memória?'
+                    },
+                    {
+                        id: 'tres_palavras',
+                        label: 'Três palavras-chave:',
+                        type: 'text',
+                        required: true,
+                        hint: 'Ex: "Visceral, Poético, Transformador"'
                     }
                 ]
             }
-            // Adicione os outros módulos conforme necessário
         ];
 
         // Variáveis globais
