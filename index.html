@@ -12,9 +12,35 @@
     <meta property="og:description" content="Crie sua peça teatral completa respondendo a perguntas orientadas. Sistema gratuito desenvolvido por Alexandra Moreira.">
     <meta property="og:type" content="website">
     
-    <!-- Bibliotecas para gerar documentos - Versões específicas e CDN alternativo -->
-    <script src="https://unpkg.com/docx@7.8.0/build/index.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- Bibliotecas atualizadas com múltiplos CDNs como fallback -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.0/docx.min.js" 
+            onerror="loadAlternativeDocx()"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"
+            onerror="loadAlternativeFileSaver()"></script>
+    
+    <!-- Scripts de fallback -->
+    <script>
+        // Função para carregar bibliotecas alternativas se as principais falharem
+        function loadAlternativeDocx() {
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/docx@7.8.0/build/index.js';
+            script.onerror = function() {
+                console.error('Não foi possível carregar a biblioteca docx');
+                window.docxLoadError = true;
+            };
+            document.head.appendChild(script);
+        }
+        
+        function loadAlternativeFileSaver() {
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/file-saver@2.0.5/dist/FileSaver.min.js';
+            script.onerror = function() {
+                console.error('Não foi possível carregar FileSaver');
+                window.fileSaverLoadError = true;
+            };
+            document.head.appendChild(script);
+        }
+    </script>
     
     <style>
         /* Estilos mantidos do original */
@@ -254,6 +280,17 @@
             color: #856404;
         }
         
+        /* Alerta de erro */
+        .error-alert {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            display: none;
+        }
+        
         /* Progresso */
         .progress-container {
             margin-bottom: 40px;
@@ -375,6 +412,8 @@
             max-width: 600px;
             animation: slideIn 0.3s ease;
             position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
         .close-modal {
@@ -504,6 +543,12 @@
                 padding: 12px 25px;
                 font-size: 14px;
             }
+            
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+                padding: 25px;
+            }
         }
     </style>
 </head>
@@ -540,6 +585,11 @@
             </div>
         </div>
         
+        <!-- Alerta de erro -->
+        <div class="error-alert" id="errorAlert">
+            <strong>Atenção!</strong> <span id="errorMessage"></span>
+        </div>
+        
         <h1>🎭 Sistema Profissional de Dramaturgia Teatral</h1>
         <p class="subtitle">Crie peças teatrais completas através de orientação especializada</p>
         <p class="author-credit">Desenvolvido por <a href="#" target="_blank">Alexandra Moreira</a> - Atriz e Dramaturga</p>
@@ -564,7 +614,7 @@
             <button class="btn" onclick="nextModule()" id="nextBtn">
                 Próximo Módulo →
             </button>
-            <button class="btn btn-success" onclick="showCompletionModal()" id="completeBtn" style="display:none;">
+            <button class="btn btn-success" onclick="validateAndShowCompletion()" id="completeBtn" style="display:none;">
                 ✓ Finalizar e Gerar Peça
             </button>
         </div>
@@ -593,6 +643,10 @@
                 <br>
                 <button class="btn btn-warning" onclick="generateTextDocument()" style="margin-top: 15px;">
                     📝 Baixar em Texto (.txt)
+                </button>
+                <br>
+                <button class="btn btn-secondary" onclick="showTextPreview()" style="margin-top: 15px;">
+                    👁️ Visualizar Texto
                 </button>
                 <br>
                 <button class="btn btn-secondary" onclick="closeModal('completionModal')" style="margin-top: 20px;">
@@ -632,6 +686,7 @@
                 
                 <h3>Problemas com Download?</h3>
                 <p>Se o Word não funcionar, use a opção de Texto (.txt) que é mais compatível.</p>
+                <p>Você também pode visualizar o texto completo e copiar manualmente.</p>
             </div>
             <div style="text-align: center; margin-top: 30px;">
                 <button class="btn" onclick="closeModal('helpModal')">Entendi</button>
@@ -647,6 +702,8 @@
             <div style="text-align: left;">
                 <p>Este Sistema Profissional de Dramaturgia Teatral foi desenvolvido por <strong>Alexandra Moreira</strong>, atriz e dramaturga.</p>
                 <p>O sistema guia você através de 8 módulos essenciais para criar uma peça teatral completa e profissional.</p>
+                <h3>Versão: 1.2</h3>
+                <p>Última atualização: Dezembro 2024</p>
             </div>
             <div style="text-align: center; margin-top: 30px;">
                 <button class="btn" onclick="closeModal('aboutModal')">Fechar</button>
@@ -655,15 +712,33 @@
     </div>
 
     <script>
-        // Verificar se as bibliotecas carregaram
-        window.addEventListener('load', function() {
-            if (typeof docx === 'undefined') {
-                console.warn('Biblioteca docx não carregou. Usando alternativa.');
+        // Verificar suporte e compatibilidade do navegador
+        function checkBrowserCompatibility() {
+            const issues = [];
+            
+            if (!window.localStorage) {
+                issues.push('Seu navegador não suporta armazenamento local');
             }
-            if (typeof saveAs === 'undefined') {
-                console.warn('Biblioteca FileSaver não carregou. Usando alternativa.');
+            
+            if (!window.Blob) {
+                issues.push('Seu navegador não suporta download de arquivos');
             }
-        });
+            
+            if (issues.length > 0) {
+                showError('Problemas de compatibilidade: ' + issues.join(', '));
+            }
+        }
+
+        // Mostrar mensagem de erro
+        function showError(message) {
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorAlert.style.display = 'block';
+            setTimeout(() => {
+                errorAlert.style.display = 'none';
+            }, 10000);
+        }
 
         // Configuração completa dos 8 módulos
         const modules = [
@@ -977,22 +1052,31 @@
 
         // Inicialização
         function init() {
+            checkBrowserCompatibility();
             loadProjectData();
             renderModules();
             updateProgress();
             updateNavigation();
+            
+            // Verificar bibliotecas após carregamento
+            setTimeout(() => {
+                if (typeof docx === 'undefined' && !window.docxLoadError) {
+                    console.warn('Biblioteca docx pode não ter carregado completamente');
+                }
+            }, 2000);
         }
 
         // Carregar dados
         function loadProjectData() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                try {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
                     projectData = JSON.parse(saved);
-                } catch (e) {
-                    console.error('Erro ao carregar dados:', e);
-                    projectData = {};
                 }
+            } catch (e) {
+                console.error('Erro ao carregar dados:', e);
+                showError('Erro ao carregar dados salvos. Iniciando novo projeto.');
+                projectData = {};
             }
         }
 
@@ -1002,6 +1086,7 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(projectData));
             } catch (e) {
                 console.error('Erro ao salvar:', e);
+                showError('Erro ao salvar dados. Verifique o espaço de armazenamento.');
             }
         }
 
@@ -1029,7 +1114,7 @@
             });
         }
 
-        // Renderizar perguntas
+        // Renderizar perguntas (CORRIGIDO)
         function renderQuestions(questions, moduleId) {
             return questions.map(q => {
                 const savedValue = projectData[q.id] || '';
@@ -1040,6 +1125,14 @@
                     inputHtml = `<textarea id="${q.id}" onchange="saveAnswer('${q.id}')" ${q.required ? 'required' : ''}>${savedValue}</textarea>`;
                 } else if (q.type === 'text') {
                     inputHtml = `<input type="text" id="${q.id}" value="${savedValue}" onchange="saveAnswer('${q.id}')" ${q.required ? 'required' : ''}>`;
+                } else if (q.type === 'select' && q.options) {
+                    // CORREÇÃO: Adicionado tratamento para select
+                    inputHtml = `<select id="${q.id}" onchange="saveAnswer('${q.id}')" ${q.required ? 'required' : ''}>
+                        <option value="">Selecione uma opção...</option>
+                        ${q.options.map(option => 
+                            `<option value="${option}" ${savedValue === option ? 'selected' : ''}>${option}</option>`
+                        ).join('')}
+                    </select>`;
                 }
                 
                 return `
@@ -1055,10 +1148,12 @@
         // Salvar resposta
         function saveAnswer(fieldId) {
             const element = document.getElementById(fieldId);
-            projectData[fieldId] = element.value;
-            saveProjectData();
-            updateProgress();
-            updateNavigation();
+            if (element) {
+                projectData[fieldId] = element.value;
+                saveProjectData();
+                updateProgress();
+                updateNavigation();
+            }
         }
 
         // Verificar módulo completo
@@ -1067,6 +1162,71 @@
             return module.questions
                 .filter(q => q.required)
                 .every(q => projectData[q.id] && projectData[q.id].trim() !== '');
+        }
+
+        // Validar todos os campos obrigatórios
+        function validateAllRequiredFields() {
+            const missingFields = [];
+            
+            modules.forEach((module, moduleIndex) => {
+                module.questions.forEach(question => {
+                    if (question.required) {
+                        const value = projectData[question.id];
+                        if (!value || value.trim() === '') {
+                            missingFields.push({
+                                module: module.title,
+                                moduleIndex: moduleIndex,
+                                question: question.label
+                            });
+                        }
+                    }
+                });
+            });
+            
+            return missingFields;
+        }
+
+        // Validar e mostrar modal de conclusão
+        function validateAndShowCompletion() {
+            const missingFields = validateAllRequiredFields();
+            
+            if (missingFields.length > 0) {
+                let message = 'Por favor, preencha todos os campos obrigatórios:\n\n';
+                const moduleGroups = {};
+                
+                missingFields.forEach(field => {
+                    if (!moduleGroups[field.module]) {
+                        moduleGroups[field.module] = [];
+                    }
+                    moduleGroups[field.module].push(field.question.replace(/[*:]/g, ''));
+                });
+                
+                Object.keys(moduleGroups).forEach(moduleName => {
+                    message += `${moduleName}:\n`;
+                    moduleGroups[moduleName].forEach(question => {
+                        message += `  • ${question}\n`;
+                    });
+                    message += '\n';
+                });
+                
+                alert(message);
+                
+                // Ir para o primeiro módulo com campos faltando
+                if (missingFields.length > 0) {
+                    currentModule = missingFields[0].moduleIndex;
+                    document.querySelectorAll('.module').forEach((mod, idx) => {
+                        mod.style.display = idx === currentModule ? 'block' : 'none';
+                    });
+                    updateNavigation();
+                }
+            } else {
+                showCompletionModal();
+            }
+        }
+
+        // Mostrar modal de conclusão
+        function showCompletionModal() {
+            document.getElementById('completionModal').style.display = 'block';
         }
 
         // Atualizar progresso
@@ -1087,9 +1247,8 @@
             progressBar.textContent = `${progress}%`;
             progressText.textContent = `${progress}% Completo`;
             
-            if (progress === 100) {
-                document.getElementById('completeBtn').style.display = 'inline-block';
-            }
+            // Mostrar botão de finalizar apenas se 100% completo
+            document.getElementById('completeBtn').style.display = progress === 100 ? 'inline-block' : 'none';
         }
 
         // Navegação
@@ -1123,11 +1282,7 @@
             });
         }
 
-        // Mostrar modal
-        function showCompletionModal() {
-            document.getElementById('completionModal').style.display = 'block';
-        }
-
+        // Fechar modal
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
@@ -1140,17 +1295,51 @@
             document.getElementById('aboutModal').style.display = 'block';
         }
 
-        // Gerar documento Word com tratamento de erro melhorado
+        // Gerar conteúdo formatado da peça
+        function generatePlayContent() {
+            let content = 'PEÇA TEATRAL\n';
+            content += '='.repeat(50) + '\n\n';
+            content += `Título: ${projectData.titulo_provisorio || 'Sem título'}\n`;
+            content += `Data de criação: ${new Date().toLocaleDateString('pt-BR')}\n`;
+            content += `Sistema desenvolvido por Alexandra Moreira\n\n`;
+            content += '='.repeat(50) + '\n\n';
+            
+            modules.forEach((module, index) => {
+                content += `${index + 1}. ${module.title.toUpperCase()}\n`;
+                content += '-'.repeat(30) + '\n\n';
+                
+                module.questions.forEach(question => {
+                    const answer = projectData[question.id];
+                    if (answer && answer.trim()) {
+                        content += `${question.label}\n`;
+                        content += `${answer}\n\n`;
+                    }
+                });
+                
+                content += '\n';
+            });
+            
+            return content;
+        }
+
+        // Mostrar preview do texto
+        function showTextPreview() {
+            const textOutput = document.getElementById('textOutput');
+            textOutput.textContent = generatePlayContent();
+            textOutput.style.display = 'block';
+        }
+
+        // Gerar documento Word (MELHORADO)
         async function generateWordDocument() {
             document.getElementById('processingOverlay').style.display = 'flex';
             
             try {
                 // Verificar se a biblioteca está disponível
                 if (typeof docx === 'undefined' || !docx.Document) {
-                    throw new Error('Biblioteca Word não disponível');
+                    throw new Error('Biblioteca Word não disponível. Use a opção de texto.');
                 }
 
-                const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
+                const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, PageBreak } = docx;
                 
                 const sections = [];
                 
@@ -1163,7 +1352,12 @@
                         spacing: { after: 400 }
                     }),
                     new Paragraph({
-                        text: "Sistema desenvolvido por Alexandra Moreira",
+                        text: "Criado com o Sistema Profissional de Dramaturgia",
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 200 }
+                    }),
+                    new Paragraph({
+                        text: "Desenvolvido por Alexandra Moreira",
                         alignment: AlignmentType.CENTER,
                         spacing: { after: 200 }
                     }),
@@ -1171,10 +1365,38 @@
                         text: `Data: ${new Date().toLocaleDateString('pt-BR')}`,
                         alignment: AlignmentType.CENTER,
                         spacing: { after: 400 }
+                    }),
+                    new Paragraph({
+                        children: [new PageBreak()]
                     })
                 );
                 
-                // Conteúdo
+                // Índice
+                sections.push(
+                    new Paragraph({
+                        text: "ÍNDICE",
+                        heading: HeadingLevel.HEADING_1,
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 300 }
+                    })
+                );
+                
+                modules.forEach((module, index) => {
+                    sections.push(
+                        new Paragraph({
+                            text: `${index + 1}. ${module.title}`,
+                            spacing: { after: 100 }
+                        })
+                    );
+                });
+                
+                sections.push(
+                    new Paragraph({
+                        children: [new PageBreak()]
+                    })
+                );
+                
+                // Conteúdo dos módulos
                 modules.forEach((module, index) => {
                     sections.push(
                         new Paragraph({
@@ -1189,7 +1411,7 @@
                         if (answer && answer.trim()) {
                             sections.push(
                                 new Paragraph({
-                                    text: question.label,
+                                    text: question.label.replace(/[:*]/g, ''),
                                     heading: HeadingLevel.HEADING_2,
                                     spacing: { before: 200, after: 100 }
                                 }),
@@ -1200,8 +1422,18 @@
                             );
                         }
                     });
+                    
+                    // Quebra de página entre módulos (exceto o último)
+                    if (index < modules.length - 1) {
+                        sections.push(
+                            new Paragraph({
+                                children: [new PageBreak()]
+                            })
+                        );
+                    }
                 });
                 
+                // Criar documento
                 const doc = new Document({
                     sections: [{
                         properties: {},
@@ -1209,25 +1441,14 @@
                     }]
                 });
                 
+                // Gerar blob
                 const blob = await Packer.toBlob(doc);
                 
-                // Usar saveAs ou fallback
-                if (typeof saveAs !== 'undefined') {
-                    saveAs(blob, `peca_teatral_${new Date().toISOString().split('T')[0]}.docx`);
-                } else {
-                    // Fallback para download manual
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `peca_teatral_${new Date().toISOString().split('T')[0]}.docx`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }
+                // Download do arquivo
+                downloadBlob(blob, `peca_teatral_${projectData.titulo_provisorio || 'documento'}_${new Date().toISOString().split('T')[0]}.docx`);
                 
                 document.getElementById('processingOverlay').style.display = 'none';
-                alert('Documento gerado com sucesso!');
+                showError('Documento Word gerado com sucesso!');
                 closeModal('completionModal');
                 
             } catch (error) {
@@ -1235,54 +1456,51 @@
                 document.getElementById('processingOverlay').style.display = 'none';
                 
                 // Oferecer alternativa
-                if (confirm('Houve um problema ao gerar o arquivo Word. Deseja baixar em formato texto (.txt)?')) {
+                if (confirm('Houve um problema ao gerar o arquivo Word.\n\nPossíveis causas:\n- Navegador incompatível\n- Bloqueio de pop-ups\n- Problema de conexão\n\nDeseja baixar em formato texto (.txt) como alternativa?')) {
                     generateTextDocument();
+                } else {
+                    showError('Tente usar a opção de download em texto (.txt) ou visualizar o texto para copiar manualmente.');
                 }
             }
         }
 
-        // Gerar documento de texto como alternativa
-        function generateTextDocument() {
-            try {
-                let content = 'PEÇA TEATRAL\n';
-                content += '='.repeat(50) + '\n\n';
-                content += `Título: ${projectData.titulo_provisorio || 'Sem título'}\n`;
-                content += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
-                content += `Sistema desenvolvido por Alexandra Moreira\n\n`;
-                content += '='.repeat(50) + '\n\n';
-                
-                modules.forEach((module, index) => {
-                    content += `${index + 1}. ${module.title.toUpperCase()}\n`;
-                    content += '-'.repeat(30) + '\n\n';
-                    
-                    module.questions.forEach(question => {
-                        const answer = projectData[question.id];
-                        if (answer && answer.trim()) {
-                            content += `${question.label}\n`;
-                            content += `${answer}\n\n`;
-                        }
-                    });
-                    
-                    content += '\n';
-                });
-                
-                // Criar blob e download
-                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        // Função auxiliar para download
+        function downloadBlob(blob, filename) {
+            if (window.saveAs) {
+                // Usar FileSaver.js se disponível
+                window.saveAs(blob, filename);
+            } else {
+                // Fallback manual
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `peca_teatral_${new Date().toISOString().split('T')[0]}.txt`;
+                a.download = filename;
+                a.style.display = 'none';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                URL.revokeObjectURL(url);
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+            }
+        }
+
+        // Gerar documento de texto (MELHORADO)
+        function generateTextDocument() {
+            try {
+                const content = generatePlayContent();
                 
-                alert('Documento de texto gerado com sucesso!');
+                // Criar blob
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                
+                // Download
+                downloadBlob(blob, `peca_teatral_${projectData.titulo_provisorio || 'documento'}_${new Date().toISOString().split('T')[0]}.txt`);
+                
+                showError('Documento de texto gerado com sucesso!');
                 closeModal('completionModal');
                 
             } catch (error) {
                 console.error('Erro ao gerar texto:', error);
-                alert('Erro ao gerar documento. Por favor, tente novamente.');
+                showError('Erro ao gerar documento. Por favor, use a opção de visualizar texto e copie manualmente.');
+                showTextPreview();
             }
         }
 
@@ -1293,8 +1511,17 @@
             }
         }
 
-        // Inicializar
-        window.onload = init;
+        // Detectar quando a página está sendo fechada
+        window.addEventListener('beforeunload', function (e) {
+            const progress = document.getElementById('progressBar').style.width;
+            if (progress !== '0%' && progress !== '100%') {
+                e.preventDefault();
+                e.returnValue = 'Você tem alterações não salvas. Tem certeza que deseja sair?';
+            }
+        });
+
+        // Inicializar quando a página carregar
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
