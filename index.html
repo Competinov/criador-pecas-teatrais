@@ -12,36 +12,6 @@
     <meta property="og:description" content="Crie sua peça teatral completa respondendo a perguntas orientadas. Sistema gratuito desenvolvido por Alexandra Moreira.">
     <meta property="og:type" content="website">
     
-    <!-- Bibliotecas atualizadas com múltiplos CDNs como fallback -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.0/docx.min.js" 
-            onerror="loadAlternativeDocx()"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"
-            onerror="loadAlternativeFileSaver()"></script>
-    
-    <!-- Scripts de fallback -->
-    <script>
-        // Função para carregar bibliotecas alternativas se as principais falharem
-        function loadAlternativeDocx() {
-            const script = document.createElement('script');
-            script.src = 'https://unpkg.com/docx@7.8.0/build/index.js';
-            script.onerror = function() {
-                console.error('Não foi possível carregar a biblioteca docx');
-                window.docxLoadError = true;
-            };
-            document.head.appendChild(script);
-        }
-        
-        function loadAlternativeFileSaver() {
-            const script = document.createElement('script');
-            script.src = 'https://unpkg.com/file-saver@2.0.5/dist/FileSaver.min.js';
-            script.onerror = function() {
-                console.error('Não foi possível carregar FileSaver');
-                window.fileSaverLoadError = true;
-            };
-            document.head.appendChild(script);
-        }
-    </script>
-    
     <style>
         /* Estilos mantidos do original */
         * {
@@ -117,6 +87,22 @@
         .notice-text strong {
             display: block;
             color: #8B0000;
+            margin-bottom: 5px;
+        }
+        
+        /* Aviso sobre Word */
+        .word-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .word-warning strong {
+            display: block;
             margin-bottom: 5px;
         }
         
@@ -280,17 +266,6 @@
             color: #856404;
         }
         
-        /* Alerta de erro */
-        .error-alert {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            display: none;
-        }
-        
         /* Progresso */
         .progress-container {
             margin-bottom: 40px;
@@ -409,7 +384,7 @@
             padding: 40px;
             border-radius: 15px;
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             animation: slideIn 0.3s ease;
             position: relative;
             max-height: 80vh;
@@ -443,6 +418,26 @@
         .success-icon {
             font-size: 4em;
             margin-bottom: 20px;
+        }
+        
+        /* Área de texto para cópia */
+        .text-output {
+            background-color: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .copy-button-container {
+            text-align: center;
+            margin-top: 10px;
+            display: none;
         }
         
         /* Indicador de processamento */
@@ -511,20 +506,6 @@
             text-decoration: underline;
         }
         
-        /* Área de texto para alternativa */
-        .text-output {
-            background-color: #f8f9fa;
-            border: 2px solid #dee2e6;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-            white-space: pre-wrap;
-            max-height: 400px;
-            overflow-y: auto;
-            display: none;
-        }
-        
         /* Responsividade */
         @media (max-width: 768px) {
             .container {
@@ -585,9 +566,10 @@
             </div>
         </div>
         
-        <!-- Alerta de erro -->
-        <div class="error-alert" id="errorAlert">
-            <strong>Atenção!</strong> <span id="errorMessage"></span>
+        <!-- Aviso sobre Word -->
+        <div class="word-warning" id="wordWarning">
+            <strong>⚠️ Atenção usuários do Microsoft Edge:</strong>
+            Alguns navegadores podem ter dificuldade com o formato Word. Se isso ocorrer, use a opção de texto (.txt) ou copie o conteúdo diretamente.
         </div>
         
         <h1>🎭 Sistema Profissional de Dramaturgia Teatral</h1>
@@ -636,17 +618,25 @@
                 <p>Você completou todos os módulos com sucesso.</p>
             </div>
             <div style="text-align: center;">
-                <p style="margin-bottom: 30px;">Escolha como deseja exportar sua peça teatral:</p>
-                <button class="btn btn-success" onclick="generateWordDocument()" style="font-size: 18px; padding: 16px 40px;">
-                    📄 Baixar em Word (.docx)
+                <p style="margin-bottom: 30px; color: #666;">
+                    <strong>Recomendamos usar o formato Texto (.txt) ou RTF para melhor compatibilidade.</strong><br>
+                    <small>O formato Word pode apresentar problemas em alguns navegadores.</small>
+                </p>
+                
+                <button class="btn btn-warning" onclick="generateTextDocument()" style="font-size: 18px; padding: 16px 40px;">
+                    📝 Baixar em Texto (.txt) - RECOMENDADO
                 </button>
                 <br>
-                <button class="btn btn-warning" onclick="generateTextDocument()" style="margin-top: 15px;">
-                    📝 Baixar em Texto (.txt)
+                <button class="btn btn-success" onclick="generateRTFDocument()" style="margin-top: 15px;">
+                    📄 Baixar em RTF (Abre no Word)
+                </button>
+                <br>
+                <button class="btn btn-secondary" onclick="generateSimpleHTML()" style="margin-top: 15px;">
+                    🌐 Baixar em HTML
                 </button>
                 <br>
                 <button class="btn btn-secondary" onclick="showTextPreview()" style="margin-top: 15px;">
-                    👁️ Visualizar Texto
+                    👁️ Visualizar e Copiar Texto
                 </button>
                 <br>
                 <button class="btn btn-secondary" onclick="closeModal('completionModal')" style="margin-top: 20px;">
@@ -654,8 +644,13 @@
                 </button>
             </div>
             
-            <!-- Área de texto alternativa -->
+            <!-- Área de texto para cópia -->
             <div id="textOutput" class="text-output"></div>
+            <div id="copyButtonContainer" class="copy-button-container">
+                <button class="btn btn-secondary" onclick="copyToClipboard()">
+                    📋 Copiar Texto
+                </button>
+            </div>
         </div>
     </div>
     
@@ -681,12 +676,18 @@
                     <li>Navegue entre os módulos usando os botões</li>
                     <li>Suas respostas são salvas automaticamente</li>
                     <li>Ao completar, clique em "Finalizar e Gerar Peça"</li>
-                    <li>Escolha o formato de download (Word ou Texto)</li>
+                    <li>Escolha o formato de download:
+                        <ul>
+                            <li><strong>Texto (.txt)</strong> - Mais compatível, abre em qualquer editor</li>
+                            <li><strong>RTF</strong> - Mantém formatação, abre no Word</li>
+                            <li><strong>HTML</strong> - Para visualizar no navegador</li>
+                            <li><strong>Copiar</strong> - Para colar em qualquer programa</li>
+                        </ul>
+                    </li>
                 </ol>
                 
                 <h3>Problemas com Download?</h3>
-                <p>Se o Word não funcionar, use a opção de Texto (.txt) que é mais compatível.</p>
-                <p>Você também pode visualizar o texto completo e copiar manualmente.</p>
+                <p>Se tiver problemas, use a opção "Visualizar e Copiar Texto" para copiar o conteúdo manualmente.</p>
             </div>
             <div style="text-align: center; margin-top: 30px;">
                 <button class="btn" onclick="closeModal('helpModal')">Entendi</button>
@@ -702,8 +703,14 @@
             <div style="text-align: left;">
                 <p>Este Sistema Profissional de Dramaturgia Teatral foi desenvolvido por <strong>Alexandra Moreira</strong>, atriz e dramaturga.</p>
                 <p>O sistema guia você através de 8 módulos essenciais para criar uma peça teatral completa e profissional.</p>
-                <h3>Versão: 1.2</h3>
+                <h3>Versão: 1.3</h3>
                 <p>Última atualização: Dezembro 2024</p>
+                <p><strong>Melhorias nesta versão:</strong></p>
+                <ul>
+                    <li>Múltiplos formatos de exportação</li>
+                    <li>Melhor compatibilidade com navegadores</li>
+                    <li>Opção de copiar texto diretamente</li>
+                </ul>
             </div>
             <div style="text-align: center; margin-top: 30px;">
                 <button class="btn" onclick="closeModal('aboutModal')">Fechar</button>
@@ -712,32 +719,12 @@
     </div>
 
     <script>
-        // Verificar suporte e compatibilidade do navegador
-        function checkBrowserCompatibility() {
-            const issues = [];
-            
-            if (!window.localStorage) {
-                issues.push('Seu navegador não suporta armazenamento local');
+        // Detectar navegador
+        function detectBrowser() {
+            const userAgent = navigator.userAgent;
+            if (userAgent.indexOf("Edge") > -1 || userAgent.indexOf("Edg") > -1) {
+                document.getElementById('wordWarning').style.display = 'block';
             }
-            
-            if (!window.Blob) {
-                issues.push('Seu navegador não suporta download de arquivos');
-            }
-            
-            if (issues.length > 0) {
-                showError('Problemas de compatibilidade: ' + issues.join(', '));
-            }
-        }
-
-        // Mostrar mensagem de erro
-        function showError(message) {
-            const errorAlert = document.getElementById('errorAlert');
-            const errorMessage = document.getElementById('errorMessage');
-            errorMessage.textContent = message;
-            errorAlert.style.display = 'block';
-            setTimeout(() => {
-                errorAlert.style.display = 'none';
-            }, 10000);
         }
 
         // Configuração completa dos 8 módulos
@@ -1052,18 +1039,11 @@
 
         // Inicialização
         function init() {
-            checkBrowserCompatibility();
+            detectBrowser();
             loadProjectData();
             renderModules();
             updateProgress();
             updateNavigation();
-            
-            // Verificar bibliotecas após carregamento
-            setTimeout(() => {
-                if (typeof docx === 'undefined' && !window.docxLoadError) {
-                    console.warn('Biblioteca docx pode não ter carregado completamente');
-                }
-            }, 2000);
         }
 
         // Carregar dados
@@ -1075,7 +1055,6 @@
                 }
             } catch (e) {
                 console.error('Erro ao carregar dados:', e);
-                showError('Erro ao carregar dados salvos. Iniciando novo projeto.');
                 projectData = {};
             }
         }
@@ -1086,7 +1065,6 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(projectData));
             } catch (e) {
                 console.error('Erro ao salvar:', e);
-                showError('Erro ao salvar dados. Verifique o espaço de armazenamento.');
             }
         }
 
@@ -1114,7 +1092,7 @@
             });
         }
 
-        // Renderizar perguntas (CORRIGIDO)
+        // Renderizar perguntas
         function renderQuestions(questions, moduleId) {
             return questions.map(q => {
                 const savedValue = projectData[q.id] || '';
@@ -1126,7 +1104,6 @@
                 } else if (q.type === 'text') {
                     inputHtml = `<input type="text" id="${q.id}" value="${savedValue}" onchange="saveAnswer('${q.id}')" ${q.required ? 'required' : ''}>`;
                 } else if (q.type === 'select' && q.options) {
-                    // CORREÇÃO: Adicionado tratamento para select
                     inputHtml = `<select id="${q.id}" onchange="saveAnswer('${q.id}')" ${q.required ? 'required' : ''}>
                         <option value="">Selecione uma opção...</option>
                         ${q.options.map(option => 
@@ -1164,8 +1141,8 @@
                 .every(q => projectData[q.id] && projectData[q.id].trim() !== '');
         }
 
-        // Validar todos os campos obrigatórios
-        function validateAllRequiredFields() {
+        // Validar e mostrar conclusão
+        function validateAndShowCompletion() {
             const missingFields = [];
             
             modules.forEach((module, moduleIndex) => {
@@ -1182,13 +1159,6 @@
                     }
                 });
             });
-            
-            return missingFields;
-        }
-
-        // Validar e mostrar modal de conclusão
-        function validateAndShowCompletion() {
-            const missingFields = validateAllRequiredFields();
             
             if (missingFields.length > 0) {
                 let message = 'Por favor, preencha todos os campos obrigatórios:\n\n';
@@ -1211,7 +1181,6 @@
                 
                 alert(message);
                 
-                // Ir para o primeiro módulo com campos faltando
                 if (missingFields.length > 0) {
                     currentModule = missingFields[0].moduleIndex;
                     document.querySelectorAll('.module').forEach((mod, idx) => {
@@ -1247,7 +1216,6 @@
             progressBar.textContent = `${progress}%`;
             progressText.textContent = `${progress}% Completo`;
             
-            // Mostrar botão de finalizar apenas se 100% completo
             document.getElementById('completeBtn').style.display = progress === 100 ? 'inline-block' : 'none';
         }
 
@@ -1295,7 +1263,7 @@
             document.getElementById('aboutModal').style.display = 'block';
         }
 
-        // Gerar conteúdo formatado da peça
+        // Gerar conteúdo formatado
         function generatePlayContent() {
             let content = 'PEÇA TEATRAL\n';
             content += '='.repeat(50) + '\n\n';
@@ -1325,183 +1293,160 @@
         // Mostrar preview do texto
         function showTextPreview() {
             const textOutput = document.getElementById('textOutput');
+            const copyButton = document.getElementById('copyButtonContainer');
             textOutput.textContent = generatePlayContent();
             textOutput.style.display = 'block';
+            copyButton.style.display = 'block';
         }
 
-        // Gerar documento Word (MELHORADO)
-        async function generateWordDocument() {
-            document.getElementById('processingOverlay').style.display = 'flex';
+        // Copiar para clipboard
+        function copyToClipboard() {
+            const textOutput = document.getElementById('textOutput');
+            const text = textOutput.textContent;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Texto copiado com sucesso! Você pode colar em qualquer editor de texto.');
+                }).catch(err => {
+                    console.error('Erro ao copiar:', err);
+                    fallbackCopyToClipboard(text);
+                });
+            } else {
+                fallbackCopyToClipboard(text);
+            }
+        }
+
+        // Método alternativo para copiar
+        function fallbackCopyToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
             
             try {
-                // Verificar se a biblioteca está disponível
-                if (typeof docx === 'undefined' || !docx.Document) {
-                    throw new Error('Biblioteca Word não disponível. Use a opção de texto.');
-                }
+                document.execCommand('copy');
+                alert('Texto copiado com sucesso!');
+            } catch (err) {
+                alert('Erro ao copiar. Por favor, selecione o texto manualmente e copie com Ctrl+C.');
+            }
+            
+            document.body.removeChild(textArea);
+        }
 
-                const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, PageBreak } = docx;
-                
-                const sections = [];
-                
-                // Capa
-                sections.push(
-                    new Paragraph({
-                        text: projectData.titulo_provisorio || "Peça Teatral",
-                        heading: HeadingLevel.TITLE,
-                        alignment: AlignmentType.CENTER,
-                        spacing: { after: 400 }
-                    }),
-                    new Paragraph({
-                        text: "Criado com o Sistema Profissional de Dramaturgia",
-                        alignment: AlignmentType.CENTER,
-                        spacing: { after: 200 }
-                    }),
-                    new Paragraph({
-                        text: "Desenvolvido por Alexandra Moreira",
-                        alignment: AlignmentType.CENTER,
-                        spacing: { after: 200 }
-                    }),
-                    new Paragraph({
-                        text: `Data: ${new Date().toLocaleDateString('pt-BR')}`,
-                        alignment: AlignmentType.CENTER,
-                        spacing: { after: 400 }
-                    }),
-                    new Paragraph({
-                        children: [new PageBreak()]
-                    })
-                );
-                
-                // Índice
-                sections.push(
-                    new Paragraph({
-                        text: "ÍNDICE",
-                        heading: HeadingLevel.HEADING_1,
-                        alignment: AlignmentType.CENTER,
-                        spacing: { after: 300 }
-                    })
-                );
+        // Gerar documento de texto
+        function generateTextDocument() {
+            try {
+                const content = generatePlayContent();
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                downloadBlob(blob, `peca_teatral_${projectData.titulo_provisorio || 'documento'}_${new Date().toISOString().split('T')[0]}.txt`);
+                alert('Documento de texto gerado com sucesso!');
+                closeModal('completionModal');
+            } catch (error) {
+                console.error('Erro ao gerar texto:', error);
+                alert('Erro ao gerar documento. Por favor, use a opção de copiar texto.');
+            }
+        }
+
+        // Gerar documento RTF
+        function generateRTFDocument() {
+            try {
+                let rtfContent = '{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\\f0\\fs24 ';
+                rtfContent += '\\qc\\b\\fs36 PEÇA TEATRAL\\b0\\fs24\\par\\par\n';
+                rtfContent += `\\qc\\fs28 ${projectData.titulo_provisorio || 'Sem título'}\\fs24\\par\n`;
+                rtfContent += `\\qc Data: ${new Date().toLocaleDateString('pt-BR')}\\par\n`;
+                rtfContent += '\\qc Sistema desenvolvido por Alexandra Moreira\\par\\par\\par\n';
                 
                 modules.forEach((module, index) => {
-                    sections.push(
-                        new Paragraph({
-                            text: `${index + 1}. ${module.title}`,
-                            spacing: { after: 100 }
-                        })
-                    );
-                });
-                
-                sections.push(
-                    new Paragraph({
-                        children: [new PageBreak()]
-                    })
-                );
-                
-                // Conteúdo dos módulos
-                modules.forEach((module, index) => {
-                    sections.push(
-                        new Paragraph({
-                            text: `${index + 1}. ${module.title}`,
-                            heading: HeadingLevel.HEADING_1,
-                            spacing: { before: 400, after: 200 }
-                        })
-                    );
+                    rtfContent += `\\b\\fs28 ${index + 1}. ${module.title}\\b0\\fs24\\par\\par\n`;
                     
                     module.questions.forEach(question => {
                         const answer = projectData[question.id];
                         if (answer && answer.trim()) {
-                            sections.push(
-                                new Paragraph({
-                                    text: question.label.replace(/[:*]/g, ''),
-                                    heading: HeadingLevel.HEADING_2,
-                                    spacing: { before: 200, after: 100 }
-                                }),
-                                new Paragraph({
-                                    text: answer,
-                                    spacing: { after: 200 }
-                                })
-                            );
+                            rtfContent += `\\b ${question.label}\\b0\\par\n`;
+                            rtfContent += `${answer.replace(/\n/g, '\\par ')}\\par\\par\n`;
                         }
                     });
                     
-                    // Quebra de página entre módulos (exceto o último)
-                    if (index < modules.length - 1) {
-                        sections.push(
-                            new Paragraph({
-                                children: [new PageBreak()]
-                            })
-                        );
-                    }
+                    rtfContent += '\\page\n';
                 });
                 
-                // Criar documento
-                const doc = new Document({
-                    sections: [{
-                        properties: {},
-                        children: sections
-                    }]
-                });
+                rtfContent += '}';
                 
-                // Gerar blob
-                const blob = await Packer.toBlob(doc);
-                
-                // Download do arquivo
-                downloadBlob(blob, `peca_teatral_${projectData.titulo_provisorio || 'documento'}_${new Date().toISOString().split('T')[0]}.docx`);
-                
-                document.getElementById('processingOverlay').style.display = 'none';
-                showError('Documento Word gerado com sucesso!');
+                const blob = new Blob([rtfContent], { type: 'application/rtf' });
+                downloadBlob(blob, `peca_teatral_${projectData.titulo_provisorio || 'documento'}_${new Date().toISOString().split('T')[0]}.rtf`);
+                alert('Documento RTF gerado com sucesso! Este arquivo pode ser aberto no Microsoft Word.');
                 closeModal('completionModal');
-                
             } catch (error) {
-                console.error('Erro ao gerar Word:', error);
-                document.getElementById('processingOverlay').style.display = 'none';
+                console.error('Erro ao gerar RTF:', error);
+                alert('Erro ao gerar RTF. Por favor, use a opção de texto (.txt).');
+            }
+        }
+
+        // Gerar HTML simples
+        function generateSimpleHTML() {
+            try {
+                let htmlContent = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>${projectData.titulo_provisorio || 'Peça Teatral'}</title>
+    <style>
+        body { font-family: Georgia, serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; }
+        h1 { color: #8B0000; text-align: center; }
+        h2 { color: #8B0000; margin-top: 40px; }
+        h3 { color: #444; margin-top: 20px; }
+        .info { text-align: center; color: #666; margin-bottom: 40px; }
+        .content { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>PEÇA TEATRAL</h1>
+    <h2>${projectData.titulo_provisorio || 'Sem título'}</h2>
+    <div class="info">
+        <p>Data de criação: ${new Date().toLocaleDateString('pt-BR')}</p>
+        <p>Sistema desenvolvido por Alexandra Moreira</p>
+    </div>
+    <hr>
+`;
                 
-                // Oferecer alternativa
-                if (confirm('Houve um problema ao gerar o arquivo Word.\n\nPossíveis causas:\n- Navegador incompatível\n- Bloqueio de pop-ups\n- Problema de conexão\n\nDeseja baixar em formato texto (.txt) como alternativa?')) {
-                    generateTextDocument();
-                } else {
-                    showError('Tente usar a opção de download em texto (.txt) ou visualizar o texto para copiar manualmente.');
-                }
+                modules.forEach((module, index) => {
+                    htmlContent += `<h2>${index + 1}. ${module.title}</h2>\n`;
+                    
+                    module.questions.forEach(question => {
+                        const answer = projectData[question.id];
+                        if (answer && answer.trim()) {
+                            htmlContent += `<h3>${question.label}</h3>\n`;
+                            htmlContent += `<div class="content">${answer.replace(/\n/g, '<br>')}</div>\n`;
+                        }
+                    });
+                });
+                
+                htmlContent += '</body></html>';
+                
+                const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+                downloadBlob(blob, `peca_teatral_${projectData.titulo_provisorio || 'documento'}_${new Date().toISOString().split('T')[0]}.html`);
+                alert('Documento HTML gerado com sucesso! Abra no navegador para visualizar.');
+                closeModal('completionModal');
+            } catch (error) {
+                console.error('Erro ao gerar HTML:', error);
+                alert('Erro ao gerar HTML. Por favor, use outra opção.');
             }
         }
 
         // Função auxiliar para download
         function downloadBlob(blob, filename) {
-            if (window.saveAs) {
-                // Usar FileSaver.js se disponível
-                window.saveAs(blob, filename);
-            } else {
-                // Fallback manual
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(() => URL.revokeObjectURL(url), 100);
-            }
-        }
-
-        // Gerar documento de texto (MELHORADO)
-        function generateTextDocument() {
-            try {
-                const content = generatePlayContent();
-                
-                // Criar blob
-                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-                
-                // Download
-                downloadBlob(blob, `peca_teatral_${projectData.titulo_provisorio || 'documento'}_${new Date().toISOString().split('T')[0]}.txt`);
-                
-                showError('Documento de texto gerado com sucesso!');
-                closeModal('completionModal');
-                
-            } catch (error) {
-                console.error('Erro ao gerar texto:', error);
-                showError('Erro ao gerar documento. Por favor, use a opção de visualizar texto e copie manualmente.');
-                showTextPreview();
-            }
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 100);
         }
 
         // Fechar modal ao clicar fora
@@ -1511,7 +1456,7 @@
             }
         }
 
-        // Detectar quando a página está sendo fechada
+        // Aviso ao sair
         window.addEventListener('beforeunload', function (e) {
             const progress = document.getElementById('progressBar').style.width;
             if (progress !== '0%' && progress !== '100%') {
@@ -1520,7 +1465,7 @@
             }
         });
 
-        // Inicializar quando a página carregar
+        // Inicializar
         window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
