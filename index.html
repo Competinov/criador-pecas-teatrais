@@ -3,46 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criador de Peças Teatrais - Sistema Profissional de Dramaturgia</title>
+    <title>Criador de Peças Teatrais - Sistema Profissional de Dramaturgia com IA</title>
     
     <!-- Meta tags para SEO e compartilhamento -->
-    <meta name="description" content="Sistema gratuito e profissional para criar peças teatrais completas. Desenvolvido por Alexandra Moreira.">
+    <meta name="description" content="Sistema profissional para criar peças teatrais completas com Inteligência Artificial. Desenvolvido por Alexandra Moreira.">
     <meta name="author" content="Alexandra Moreira">
-    <meta property="og:title" content="Criador de Peças Teatrais - Sistema Profissional">
-    <meta property="og:description" content="Crie sua peça teatral completa respondendo a perguntas orientadas. Sistema gratuito desenvolvido por Alexandra Moreira.">
+    <meta property="og:title" content="Criador de Peças Teatrais com IA - Sistema Profissional">
+    <meta property="og:description" content="Crie sua peça teatral completa com IA respondendo a perguntas orientadas. Sistema automatizado desenvolvido por Alexandra Moreira.">
     <meta property="og:type" content="website">
     
     <style>
-        /* Estilos mantidos do original */
+        /* ===== RESET E CONFIGURAÇÕES BASE ===== */
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         
+        /* ===== VARIÁVEIS CSS PARA FÁCIL PERSONALIZAÇÃO ===== */
+        :root {
+            --cor-principal: #8B0000;
+            --cor-principal-hover: #a00000;
+            --cor-sucesso: #4CAF50;
+            --cor-aviso: #ff9800;
+            --cor-fundo: #f5f5f5;
+            --cor-texto: #333;
+            --cor-borda: #e0e0e0;
+            --sombra-padrao: 0 5px 20px rgba(0,0,0,0.1);
+            --transicao-padrao: all 0.3s ease;
+        }
+        
+        /* ===== ESTILOS GERAIS DO CORPO ===== */
         body {
             font-family: 'Georgia', serif;
             max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
             line-height: 1.6;
         }
         
+        /* ===== CONTAINER PRINCIPAL ===== */
         .container {
             background-color: white;
             border-radius: 15px;
             padding: 40px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: var(--sombra-padrao);
         }
         
-        /* Banner de boas-vindas */
+        /* ===== BANNER DE BOAS-VINDAS ===== */
         .welcome-banner {
-            background: linear-gradient(135deg, #8B0000, #CD5C5C);
+            background: linear-gradient(135deg, var(--cor-principal), #CD5C5C);
             color: white;
             padding: 30px;
             border-radius: 10px;
             margin-bottom: 30px;
             text-align: center;
+            animation: fadeIn 0.5s ease;
         }
         
         .welcome-banner h2 {
@@ -55,7 +73,7 @@
             opacity: 0.9;
         }
         
-        /* Avisos importantes */
+        /* ===== AVISOS IMPORTANTES ===== */
         .important-notices {
             background-color: #f8f9fa;
             border-radius: 10px;
@@ -86,29 +104,13 @@
         
         .notice-text strong {
             display: block;
-            color: #8B0000;
+            color: var(--cor-principal);
             margin-bottom: 5px;
         }
         
-        /* Aviso sobre Word */
-        .word-warning {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            display: none;
-        }
-        
-        .word-warning strong {
-            display: block;
-            margin-bottom: 5px;
-        }
-        
-        /* Título principal */
+        /* ===== TÍTULOS E TEXTOS ===== */
         h1 {
-            color: #8B0000;
+            color: var(--cor-principal);
             text-align: center;
             font-size: 2.5em;
             margin-bottom: 10px;
@@ -132,7 +134,7 @@
         }
         
         .author-credit a {
-            color: #8B0000;
+            color: var(--cor-principal);
             text-decoration: none;
         }
         
@@ -140,29 +142,32 @@
             text-decoration: underline;
         }
         
-        /* Módulos */
+        /* ===== MÓDULOS DO FORMULÁRIO ===== */
         .module {
             background-color: #fafafa;
             border-radius: 12px;
             padding: 30px;
             margin-bottom: 30px;
-            border: 1px solid #e0e0e0;
-            transition: all 0.3s ease;
+            border: 1px solid var(--cor-borda);
+            transition: var(--transicao-padrao);
+            display: none;
         }
         
         .module.active {
+            display: block;
             background-color: #fff;
             box-shadow: 0 8px 25px rgba(139,0,0,0.08);
-            border-color: #8B0000;
+            border-color: var(--cor-principal);
+            animation: slideIn 0.3s ease;
         }
         
         .module.completed {
-            border-color: #4CAF50;
+            border-color: var(--cor-sucesso);
             background-color: #f8fff8;
         }
         
         .module h2 {
-            color: #8B0000;
+            color: var(--cor-principal);
             margin-bottom: 25px;
             display: flex;
             align-items: center;
@@ -172,7 +177,7 @@
         }
         
         .module-number {
-            background-color: #8B0000;
+            background-color: var(--cor-principal);
             color: white;
             width: 40px;
             height: 40px;
@@ -185,7 +190,7 @@
         }
         
         .module.completed .module-number {
-            background-color: #4CAF50;
+            background-color: var(--cor-sucesso);
         }
         
         .module-intro {
@@ -195,21 +200,21 @@
             padding: 15px 20px;
             background-color: rgba(139,0,0,0.03);
             border-radius: 8px;
-            border-left: 3px solid #8B0000;
+            border-left: 3px solid var(--cor-principal);
         }
         
-        /* Perguntas */
+        /* ===== PERGUNTAS DO FORMULÁRIO ===== */
         .question {
             margin-bottom: 25px;
             padding: 20px;
             background-color: white;
             border-radius: 10px;
-            border: 1px solid #e0e0e0;
-            transition: all 0.2s ease;
+            border: 1px solid var(--cor-borda);
+            transition: var(--transicao-padrao);
         }
         
         .question:hover {
-            border-color: #8B0000;
+            border-color: var(--cor-principal);
             box-shadow: 0 3px 10px rgba(139,0,0,0.05);
         }
         
@@ -232,22 +237,23 @@
             width: 100%;
             padding: 12px 15px;
             background-color: #fafafa;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--cor-borda);
             border-radius: 8px;
-            color: #333;
+            color: var(--cor-texto);
             font-family: 'Georgia', serif;
             font-size: 1em;
             resize: vertical;
             min-height: 100px;
-            transition: all 0.2s ease;
+            transition: var(--transicao-padrao);
         }
         
         .question textarea:focus,
         .question input[type="text"]:focus,
         .question select:focus {
             outline: none;
-            border-color: #8B0000;
+            border-color: var(--cor-principal);
             background-color: white;
+            box-shadow: 0 0 0 3px rgba(139,0,0,0.1);
         }
         
         .question input[type="text"],
@@ -266,9 +272,13 @@
             color: #856404;
         }
         
-        /* Progresso */
+        /* ===== BARRA DE PROGRESSO ===== */
         .progress-container {
             margin-bottom: 40px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         
         .progress-info {
@@ -288,7 +298,7 @@
         }
         
         .progress-bar {
-            background: linear-gradient(90deg, #8B0000, #CD5C5C);
+            background: linear-gradient(90deg, var(--cor-principal), #CD5C5C);
             height: 100%;
             border-radius: 15px;
             width: 0%;
@@ -301,9 +311,9 @@
             font-size: 14px;
         }
         
-        /* Botões */
+        /* ===== BOTÕES ===== */
         .btn {
-            background-color: #8B0000;
+            background-color: var(--cor-principal);
             color: white;
             border: none;
             padding: 14px 35px;
@@ -311,15 +321,35 @@
             cursor: pointer;
             font-size: 16px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: var(--transicao-padrao);
             display: inline-block;
             margin: 10px 5px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
         
         .btn:hover:not(:disabled) {
-            background-color: #a00000;
+            background-color: var(--cor-principal-hover);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(139,0,0,0.3);
         }
@@ -341,7 +371,7 @@
         }
         
         .btn-success {
-            background-color: #4CAF50;
+            background-color: var(--cor-sucesso);
         }
         
         .btn-success:hover:not(:disabled) {
@@ -350,7 +380,7 @@
         }
         
         .btn-warning {
-            background-color: #ff9800;
+            background-color: var(--cor-aviso);
         }
         
         .btn-warning:hover:not(:disabled) {
@@ -362,10 +392,10 @@
             text-align: center;
             margin-top: 40px;
             padding-top: 30px;
-            border-top: 2px solid #e0e0e0;
+            border-top: 2px solid var(--cor-borda);
         }
         
-        /* Modal */
+        /* ===== MODAIS ===== */
         .modal {
             display: none;
             position: fixed;
@@ -384,7 +414,7 @@
             padding: 40px;
             border-radius: 15px;
             width: 90%;
-            max-width: 700px;
+            max-width: 600px;
             animation: slideIn 0.3s ease;
             position: relative;
             max-height: 80vh;
@@ -405,42 +435,7 @@
             color: #333;
         }
         
-        .modal-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .modal-header h2 {
-            color: #8B0000;
-            margin-bottom: 10px;
-        }
-        
-        .success-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-        }
-        
-        /* Área de texto para cópia */
-        .text-output {
-            background-color: #f8f9fa;
-            border: 2px solid #dee2e6;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-            white-space: pre-wrap;
-            max-height: 400px;
-            overflow-y: auto;
-            display: none;
-        }
-        
-        .copy-button-container {
-            text-align: center;
-            margin-top: 10px;
-            display: none;
-        }
-        
-        /* Indicador de processamento */
+        /* ===== MODAL DE PROCESSAMENTO ===== */
         .processing-overlay {
             display: none;
             position: fixed;
@@ -464,7 +459,7 @@
         
         .spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #8B0000;
+            border-top: 4px solid var(--cor-principal);
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -472,6 +467,59 @@
             margin: 0 auto 20px;
         }
         
+        /* ===== MODAL DE SUCESSO ===== */
+        .modal-sucesso {
+            display: flex;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s ease;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content-sucesso {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 500px;
+            animation: bounceIn 0.5s ease;
+        }
+        
+        .modal-content-sucesso h2 {
+            color: var(--cor-sucesso);
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        
+        .modal-content-sucesso p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .modal-content-sucesso strong {
+            color: var(--cor-principal);
+        }
+        
+        .nota-importante {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 0.9em;
+            color: #856404;
+        }
+        
+        .modal-content-sucesso button {
+            margin-top: 20px;
+        }
+        
+        /* ===== ANIMAÇÕES ===== */
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -487,18 +535,35 @@
             to { transform: translateY(0); opacity: 1; }
         }
         
-        /* Footer */
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* ===== FOOTER ===== */
         .footer {
             text-align: center;
             margin-top: 60px;
             padding-top: 30px;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid var(--cor-borda);
             color: #666;
             font-size: 0.9em;
         }
         
         .footer a {
-            color: #8B0000;
+            color: var(--cor-principal);
             text-decoration: none;
         }
         
@@ -506,8 +571,12 @@
             text-decoration: underline;
         }
         
-        /* Responsividade */
+        /* ===== RESPONSIVIDADE ===== */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
             .container {
                 padding: 20px;
             }
@@ -523,12 +592,19 @@
             .btn {
                 padding: 12px 25px;
                 font-size: 14px;
+                display: block;
+                width: 100%;
+                margin: 10px 0;
             }
             
             .modal-content {
                 margin: 10% auto;
                 width: 95%;
                 padding: 25px;
+            }
+            
+            .question {
+                padding: 15px;
             }
         }
     </style>
@@ -537,46 +613,40 @@
     <div class="container">
         <!-- Banner de boas-vindas -->
         <div class="welcome-banner" id="welcomeBanner">
-            <h2>🎭 Bem-vindo ao Sistema de Criação Teatral!</h2>
-            <p>Transforme suas ideias em peças teatrais profissionais e completas</p>
+            <h2>🎭 Sistema Inteligente de Criação Teatral</h2>
+            <p>Crie peças profissionais completas com Inteligência Artificial</p>
         </div>
         
         <!-- Avisos importantes -->
         <div class="important-notices">
             <div class="notice-item">
+                <span class="notice-icon">🤖</span>
+                <div class="notice-text">
+                    <strong>Geração Automática com IA</strong>
+                    Após preencher o formulário, nossa IA criará uma peça teatral completa baseada em suas especificações.
+                </div>
+            </div>
+            <div class="notice-item">
+                <span class="notice-icon">📧</span>
+                <div class="notice-text">
+                    <strong>Entrega por Email</strong>
+                    Você receberá a peça completa em formato PDF no email fornecido em poucos minutos.
+                </div>
+            </div>
+            <div class="notice-item">
                 <span class="notice-icon">💾</span>
                 <div class="notice-text">
                     <strong>Salvamento Automático</strong>
-                    Suas respostas são salvas automaticamente no seu navegador. Você pode fechar e voltar quando quiser!
-                </div>
-            </div>
-            <div class="notice-item">
-                <span class="notice-icon">🔒</span>
-                <div class="notice-text">
-                    <strong>Privacidade Total</strong>
-                    Suas respostas ficam apenas no seu computador. Ninguém tem acesso aos seus dados.
-                </div>
-            </div>
-            <div class="notice-item">
-                <span class="notice-icon">⚠️</span>
-                <div class="notice-text">
-                    <strong>Importante</strong>
-                    Não limpe os dados do navegador antes de baixar sua peça finalizada.
+                    Suas respostas são salvas automaticamente. Pode pausar e continuar quando quiser.
                 </div>
             </div>
         </div>
         
-        <!-- Aviso sobre Word -->
-        <div class="word-warning" id="wordWarning">
-            <strong>⚠️ Atenção usuários do Microsoft Edge:</strong>
-            Alguns navegadores podem ter dificuldade com o formato Word. Se isso ocorrer, use a opção de texto (.txt) ou copie o conteúdo diretamente.
-        </div>
-        
-        <h1>🎭 Sistema Profissional de Dramaturgia Teatral</h1>
-        <p class="subtitle">Crie peças teatrais completas através de orientação especializada</p>
+        <h1>🎭 Sistema Profissional de Dramaturgia com IA</h1>
+        <p class="subtitle">Transforme suas ideias em peças teatrais completas através de orientação especializada e inteligência artificial</p>
         <p class="author-credit">Desenvolvido por <a href="#" target="_blank">Alexandra Moreira</a> - Atriz e Dramaturga</p>
         
-        <!-- Informações de progresso -->
+        <!-- Barra de progresso -->
         <div class="progress-container">
             <div class="progress-info">
                 <span>Progresso Total</span>
@@ -587,8 +657,10 @@
             </div>
         </div>
         
+        <!-- Container dos módulos -->
         <div id="modules"></div>
         
+        <!-- Navegação -->
         <div class="navigation">
             <button class="btn btn-secondary" onclick="previousModule()" id="prevBtn" disabled>
                 ← Módulo Anterior
@@ -596,61 +668,15 @@
             <button class="btn" onclick="nextModule()" id="nextBtn">
                 Próximo Módulo →
             </button>
-            <button class="btn btn-success" onclick="validateAndShowCompletion()" id="completeBtn" style="display:none;">
-                ✓ Finalizar e Gerar Peça
+            <button class="btn btn-success" onclick="enviarParaProcessamentoAutomatico()" id="completeBtn" style="display:none;">
+                ✓ Finalizar e Receber Peça por Email
             </button>
         </div>
         
         <!-- Footer -->
         <div class="footer">
-            <p>Sistema de Dramaturgia Digital © 2024 | Criado com ❤️ para a comunidade teatral</p>
+            <p>Sistema de Dramaturgia Digital com IA © 2024 | Criado com ❤️ para a comunidade teatral</p>
             <p><a href="#" onclick="showHelpModal()">Ajuda</a> | <a href="#" onclick="showAboutModal()">Sobre</a></p>
-        </div>
-    </div>
-    
-    <!-- Modal de conclusão -->
-    <div class="modal" id="completionModal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('completionModal')">&times;</span>
-            <div class="modal-header">
-                <div class="success-icon">🎉</div>
-                <h2>Parabéns! Sua Peça Está Pronta!</h2>
-                <p>Você completou todos os módulos com sucesso.</p>
-            </div>
-            <div style="text-align: center;">
-                <p style="margin-bottom: 30px; color: #666;">
-                    <strong>Recomendamos usar o formato Texto (.txt) ou RTF para melhor compatibilidade.</strong><br>
-                    <small>O formato Word pode apresentar problemas em alguns navegadores.</small>
-                </p>
-                
-                <button class="btn btn-warning" onclick="generateTextDocument()" style="font-size: 18px; padding: 16px 40px;">
-                    📝 Baixar em Texto (.txt) - RECOMENDADO
-                </button>
-                <br>
-                <button class="btn btn-success" onclick="generateRTFDocument()" style="margin-top: 15px;">
-                    📄 Baixar em RTF (Abre no Word)
-                </button>
-                <br>
-                <button class="btn btn-secondary" onclick="generateSimpleHTML()" style="margin-top: 15px;">
-                    🌐 Baixar em HTML
-                </button>
-                <br>
-                <button class="btn btn-secondary" onclick="showTextPreview()" style="margin-top: 15px;">
-                    👁️ Visualizar e Copiar Texto
-                </button>
-                <br>
-                <button class="btn btn-secondary" onclick="closeModal('completionModal')" style="margin-top: 20px;">
-                    Revisar Respostas
-                </button>
-            </div>
-            
-            <!-- Área de texto para cópia -->
-            <div id="textOutput" class="text-output"></div>
-            <div id="copyButtonContainer" class="copy-button-container">
-                <button class="btn btn-secondary" onclick="copyToClipboard()">
-                    📋 Copiar Texto
-                </button>
-            </div>
         </div>
     </div>
     
@@ -658,9 +684,9 @@
     <div class="processing-overlay" id="processingOverlay">
         <div class="processing-content">
             <div class="spinner"></div>
-            <h3 style="color: #8B0000;">Gerando sua peça teatral...</h3>
-            <p>Por favor, aguarde. Estamos criando seu documento.</p>
-            <p style="font-size: 0.9em; color: #666; margin-top: 20px;">Isso pode levar alguns segundos...</p>
+            <h3 style="color: #8B0000;">Enviando para processamento...</h3>
+            <p>Nossa inteligência artificial está preparando sua peça teatral.</p>
+            <p style="font-size: 0.9em; color: #666; margin-top: 20px;">Você receberá o documento completo por email em breve.</p>
         </div>
     </div>
     
@@ -668,26 +694,24 @@
     <div class="modal" id="helpModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('helpModal')">&times;</span>
-            <h2 style="color: #8B0000;">Como Usar o Sistema</h2>
+            <h2 style="color: #8B0000;">Como Funciona o Sistema</h2>
             <div style="text-align: left;">
-                <h3>Instruções:</h3>
-                <ol>
-                    <li>Preencha todos os campos obrigatórios (marcados com *)</li>
-                    <li>Navegue entre os módulos usando os botões</li>
-                    <li>Suas respostas são salvas automaticamente</li>
-                    <li>Ao completar, clique em "Finalizar e Gerar Peça"</li>
-                    <li>Escolha o formato de download:
-                        <ul>
-                            <li><strong>Texto (.txt)</strong> - Mais compatível, abre em qualquer editor</li>
-                            <li><strong>RTF</strong> - Mantém formatação, abre no Word</li>
-                            <li><strong>HTML</strong> - Para visualizar no navegador</li>
-                            <li><strong>Copiar</strong> - Para colar em qualquer programa</li>
-                        </ul>
-                    </li>
+                <h3>O Processo Completo:</h3>
+                <ol style="line-height: 1.8;">
+                    <li><strong>Preencha o Formulário:</strong> Responda todas as perguntas sobre sua peça teatral.</li>
+                    <li><strong>Clique em Finalizar:</strong> Ao completar todos os módulos, clique no botão verde.</li>
+                    <li><strong>Forneça seu Email:</strong> Digite o email onde deseja receber a peça.</li>
+                    <li><strong>Aguarde o Processamento:</strong> Nossa IA criará uma peça completa baseada em suas respostas.</li>
+                    <li><strong>Receba por Email:</strong> Em poucos minutos, você receberá um PDF com a peça completa.</li>
                 </ol>
                 
-                <h3>Problemas com Download?</h3>
-                <p>Se tiver problemas, use a opção "Visualizar e Copiar Texto" para copiar o conteúdo manualmente.</p>
+                <h3 style="margin-top: 20px;">Dicas Importantes:</h3>
+                <ul style="line-height: 1.8;">
+                    <li>Seja específico nas suas respostas - quanto mais detalhes, melhor será o resultado.</li>
+                    <li>Todos os campos marcados com * são obrigatórios.</li>
+                    <li>Verifique a pasta de spam se não receber o email em 10 minutos.</li>
+                    <li>O sistema salva automaticamente suas respostas.</li>
+                </ul>
             </div>
             <div style="text-align: center; margin-top: 30px;">
                 <button class="btn" onclick="closeModal('helpModal')">Entendi</button>
@@ -701,16 +725,21 @@
             <span class="close-modal" onclick="closeModal('aboutModal')">&times;</span>
             <h2 style="color: #8B0000;">Sobre o Sistema</h2>
             <div style="text-align: left;">
-                <p>Este Sistema Profissional de Dramaturgia Teatral foi desenvolvido por <strong>Alexandra Moreira</strong>, atriz e dramaturga.</p>
-                <p>O sistema guia você através de 8 módulos essenciais para criar uma peça teatral completa e profissional.</p>
-                <h3>Versão: 1.3</h3>
-                <p>Última atualização: Dezembro 2024</p>
-                <p><strong>Melhorias nesta versão:</strong></p>
+                <p>Este Sistema Profissional de Dramaturgia Teatral com IA foi desenvolvido por <strong>Alexandra Moreira</strong>, atriz e dramaturga.</p>
+                
+                <h3>Como a IA Funciona:</h3>
+                <p>O sistema utiliza modelos avançados de inteligência artificial para gerar peças teatrais completas baseadas nas suas especificações. Cada resposta que você fornece é processada e incorporada na estrutura dramática final.</p>
+                
+                <h3>O que Você Recebe:</h3>
                 <ul>
-                    <li>Múltiplos formatos de exportação</li>
-                    <li>Melhor compatibilidade com navegadores</li>
-                    <li>Opção de copiar texto diretamente</li>
+                    <li>Peça teatral completa com diálogos</li>
+                    <li>Rubricas detalhadas de movimento e emoção</li>
+                    <li>Indicações técnicas de luz, som e cenografia</li>
+                    <li>Documento profissional em PDF</li>
                 </ul>
+                
+                <h3>Versão: 2.0 com IA</h3>
+                <p>Última atualização: Dezembro 2024</p>
             </div>
             <div style="text-align: center; margin-top: 30px;">
                 <button class="btn" onclick="closeModal('aboutModal')">Fechar</button>
@@ -719,15 +748,8 @@
     </div>
 
     <script>
-        // Detectar navegador
-        function detectBrowser() {
-            const userAgent = navigator.userAgent;
-            if (userAgent.indexOf("Edge") > -1 || userAgent.indexOf("Edg") > -1) {
-                document.getElementById('wordWarning').style.display = 'block';
-            }
-        }
-
-        // Configuração completa dos 8 módulos
+        // ===== CONFIGURAÇÃO DOS MÓDULOS =====
+        // Define a estrutura completa do questionário em 8 módulos temáticos
         const modules = [
             {
                 id: 'essencia',
@@ -1032,26 +1054,33 @@
             }
         ];
 
-        // Variáveis globais
-        let currentModule = 0;
-        let projectData = {};
-        const STORAGE_KEY = 'teatroProject_v3';
+        // ===== VARIÁVEIS GLOBAIS DO SISTEMA =====
+        let currentModule = 0;  // Módulo atual sendo exibido
+        let projectData = {};   // Dados do projeto do usuário
+        const STORAGE_KEY = 'teatroProject_v3';  // Chave para localStorage
 
-        // Inicialização
+        // URL do webhook do Make.com - SUBSTITUA pela sua URL real
+        const WEBHOOK_URL = 'COLE_AQUI_SEU_WEBHOOK_URL_DO_MAKE_COM';
+
+        // ===== FUNÇÕES DE INICIALIZAÇÃO =====
         function init() {
-            detectBrowser();
+            // Carrega dados salvos se existirem
             loadProjectData();
+            // Renderiza todos os módulos
             renderModules();
+            // Atualiza a barra de progresso
             updateProgress();
+            // Atualiza os botões de navegação
             updateNavigation();
         }
 
-        // Carregar dados
+        // ===== FUNÇÕES DE PERSISTÊNCIA DE DADOS =====
         function loadProjectData() {
             try {
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) {
                     projectData = JSON.parse(saved);
+                    console.log('Dados carregados do localStorage');
                 }
             } catch (e) {
                 console.error('Erro ao carregar dados:', e);
@@ -1059,25 +1088,25 @@
             }
         }
 
-        // Salvar dados
         function saveProjectData() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(projectData));
+                console.log('Dados salvos no localStorage');
             } catch (e) {
                 console.error('Erro ao salvar:', e);
             }
         }
 
-        // Renderizar módulos
+        // ===== FUNÇÕES DE RENDERIZAÇÃO =====
         function renderModules() {
             const container = document.getElementById('modules');
             container.innerHTML = '';
             
+            // Cria cada módulo do formulário
             modules.forEach((module, index) => {
                 const moduleDiv = document.createElement('div');
                 moduleDiv.className = `module ${index === currentModule ? 'active' : ''} ${isModuleComplete(index) ? 'completed' : ''}`;
                 moduleDiv.id = `module-${index}`;
-                moduleDiv.style.display = index === currentModule ? 'block' : 'none';
                 
                 moduleDiv.innerHTML = `
                     <h2>
@@ -1092,19 +1121,32 @@
             });
         }
 
-        // Renderizar perguntas
         function renderQuestions(questions, moduleId) {
             return questions.map(q => {
                 const savedValue = projectData[q.id] || '';
                 const requiredMark = q.required ? '<span class="required-mark">*</span>' : '';
                 let inputHtml = '';
                 
+                // Renderiza diferentes tipos de input
                 if (q.type === 'textarea') {
-                    inputHtml = `<textarea id="${q.id}" onchange="saveAnswer('${q.id}')" ${q.required ? 'required' : ''}>${savedValue}</textarea>`;
+                    inputHtml = `<textarea 
+                        id="${q.id}" 
+                        onchange="saveAnswer('${q.id}')" 
+                        oninput="autoSave('${q.id}')"
+                        ${q.required ? 'required' : ''}>${savedValue}</textarea>`;
                 } else if (q.type === 'text') {
-                    inputHtml = `<input type="text" id="${q.id}" value="${savedValue}" onchange="saveAnswer('${q.id}')" ${q.required ? 'required' : ''}>`;
+                    inputHtml = `<input 
+                        type="text" 
+                        id="${q.id}" 
+                        value="${savedValue}" 
+                        onchange="saveAnswer('${q.id}')"
+                        oninput="autoSave('${q.id}')" 
+                        ${q.required ? 'required' : ''}>`;
                 } else if (q.type === 'select' && q.options) {
-                    inputHtml = `<select id="${q.id}" onchange="saveAnswer('${q.id}')" ${q.required ? 'required' : ''}>
+                    inputHtml = `<select 
+                        id="${q.id}" 
+                        onchange="saveAnswer('${q.id}')" 
+                        ${q.required ? 'required' : ''}>
                         <option value="">Selecione uma opção...</option>
                         ${q.options.map(option => 
                             `<option value="${option}" ${savedValue === option ? 'selected' : ''}>${option}</option>`
@@ -1122,7 +1164,7 @@
             }).join('');
         }
 
-        // Salvar resposta
+        // ===== FUNÇÕES DE SALVAMENTO =====
         function saveAnswer(fieldId) {
             const element = document.getElementById(fieldId);
             if (element) {
@@ -1133,7 +1175,16 @@
             }
         }
 
-        // Verificar módulo completo
+        // Auto-salvamento com debounce
+        let autoSaveTimeout;
+        function autoSave(fieldId) {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                saveAnswer(fieldId);
+            }, 1000); // Salva após 1 segundo de inatividade
+        }
+
+        // ===== FUNÇÕES DE VALIDAÇÃO =====
         function isModuleComplete(moduleIndex) {
             const module = modules[moduleIndex];
             return module.questions
@@ -1141,8 +1192,7 @@
                 .every(q => projectData[q.id] && projectData[q.id].trim() !== '');
         }
 
-        // Validar e mostrar conclusão
-        function validateAndShowCompletion() {
+        function validateAllRequiredFields() {
             const missingFields = [];
             
             modules.forEach((module, moduleIndex) => {
@@ -1160,7 +1210,71 @@
                 });
             });
             
+            return missingFields;
+        }
+
+        // ===== FUNÇÕES DE PROGRESSO =====
+        function updateProgress() {
+            const totalRequired = modules.reduce((sum, m) => 
+                sum + m.questions.filter(q => q.required).length, 0
+            );
+            const answeredRequired = modules.reduce((sum, m) => 
+                sum + m.questions.filter(q => q.required && projectData[q.id] && projectData[q.id].trim() !== '').length, 0
+            );
+            
+            const progress = totalRequired > 0 ? Math.round((answeredRequired / totalRequired) * 100) : 0;
+            
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            progressBar.style.width = `${progress}%`;
+            progressBar.textContent = `${progress}%`;
+            progressText.textContent = `${progress}% Completo`;
+            
+            // Mostra botão de finalizar apenas quando 100% completo
+            document.getElementById('completeBtn').style.display = progress === 100 ? 'inline-block' : 'none';
+        }
+
+        // ===== FUNÇÕES DE NAVEGAÇÃO =====
+        function nextModule() {
+            if (currentModule < modules.length - 1) {
+                document.getElementById(`module-${currentModule}`).classList.remove('active');
+                currentModule++;
+                document.getElementById(`module-${currentModule}`).classList.add('active');
+                updateNavigation();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function previousModule() {
+            if (currentModule > 0) {
+                document.getElementById(`module-${currentModule}`).classList.remove('active');
+                currentModule--;
+                document.getElementById(`module-${currentModule}`).classList.add('active');
+                updateNavigation();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function updateNavigation() {
+            // Atualiza estado dos botões de navegação
+            document.getElementById('prevBtn').disabled = currentModule === 0;
+            document.getElementById('nextBtn').disabled = currentModule === modules.length - 1;
+            
+            // Atualiza classes visuais dos módulos
+            document.querySelectorAll('.module').forEach((mod, idx) => {
+                mod.classList.toggle('active', idx === currentModule);
+                mod.classList.toggle('completed', isModuleComplete(idx));
+            });
+        }
+
+        // ===== FUNÇÃO PRINCIPAL DE ENVIO PARA PROCESSAMENTO =====
+        function enviarParaProcessamentoAutomatico() {
+            // Valida todos os campos obrigatórios
+            const missingFields = validateAllRequiredFields();
+            
             if (missingFields.length > 0) {
+                // Mostra quais campos estão faltando
                 let message = 'Por favor, preencha todos os campos obrigatórios:\n\n';
                 const moduleGroups = {};
                 
@@ -1181,76 +1295,163 @@
                 
                 alert(message);
                 
+                // Navega para o primeiro módulo com campos faltando
                 if (missingFields.length > 0) {
                     currentModule = missingFields[0].moduleIndex;
                     document.querySelectorAll('.module').forEach((mod, idx) => {
-                        mod.style.display = idx === currentModule ? 'block' : 'none';
+                        mod.classList.toggle('active', idx === currentModule);
                     });
                     updateNavigation();
                 }
-            } else {
-                showCompletionModal();
+                return;
             }
-        }
-
-        // Mostrar modal de conclusão
-        function showCompletionModal() {
-            document.getElementById('completionModal').style.display = 'block';
-        }
-
-        // Atualizar progresso
-        function updateProgress() {
-            const totalRequired = modules.reduce((sum, m) => 
-                sum + m.questions.filter(q => q.required).length, 0
-            );
-            const answeredRequired = modules.reduce((sum, m) => 
-                sum + m.questions.filter(q => q.required && projectData[q.id] && projectData[q.id].trim() !== '').length, 0
-            );
             
-            const progress = totalRequired > 0 ? Math.round((answeredRequired / totalRequired) * 100) : 0;
+            // Solicita o email do destinatário
+            const emailDestino = prompt('Digite seu email para receber a peça teatral completa:');
             
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
-            
-            progressBar.style.width = `${progress}%`;
-            progressBar.textContent = `${progress}%`;
-            progressText.textContent = `${progress}% Completo`;
-            
-            document.getElementById('completeBtn').style.display = progress === 100 ? 'inline-block' : 'none';
-        }
-
-        // Navegação
-        function nextModule() {
-            if (currentModule < modules.length - 1) {
-                document.getElementById(`module-${currentModule}`).style.display = 'none';
-                currentModule++;
-                document.getElementById(`module-${currentModule}`).style.display = 'block';
-                updateNavigation();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (!emailDestino || !emailDestino.includes('@')) {
+                alert('Por favor, forneça um email válido.');
+                return;
             }
-        }
-
-        function previousModule() {
-            if (currentModule > 0) {
-                document.getElementById(`module-${currentModule}`).style.display = 'none';
-                currentModule--;
-                document.getElementById(`module-${currentModule}`).style.display = 'block';
-                updateNavigation();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        function updateNavigation() {
-            document.getElementById('prevBtn').disabled = currentModule === 0;
-            document.getElementById('nextBtn').disabled = currentModule === modules.length - 1;
             
-            document.querySelectorAll('.module').forEach((mod, idx) => {
-                mod.classList.toggle('active', idx === currentModule);
-                mod.classList.toggle('completed', isModuleComplete(idx));
+            // Prepara todos os dados para envio
+            const dadosParaEnvio = {
+                // Informações do destinatário e timestamp
+                email_destino: emailDestino,
+                data_criacao: new Date().toISOString(),
+                
+                // Módulo 1: Essência e Propósito
+                titulo: projectData.titulo_provisorio,
+                fagulha_inicial: projectData.fagulha,
+                pergunta_central: projectData.pergunta_central,
+                transformacao_desejada: projectData.transformacao,
+                publico_alvo: projectData.publico_alvo,
+                espaco_teatral: projectData.espaco,
+                duracao: projectData.duracao,
+                
+                // Módulo 2: Estrutura Narrativa
+                sinopse: projectData.sinopse,
+                estrutura_narrativa: projectData.estrutura_narrativa,
+                divisao_atos: projectData.num_atos,
+                ponto_virada: projectData.ponto_virada,
+                personagens: projectData.personagens,
+                antagonista: projectData.antagonista || 'Não especificado',
+                linguagem_personagens: projectData.linguagem || 'Não especificada',
+                
+                // Módulo 3: Cenografia
+                epoca_local: projectData.epoca_local,
+                ambientes: projectData.num_ambientes,
+                atmosfera_visual: projectData.atmosfera,
+                elementos_cenograficos: projectData.elementos_essenciais,
+                objetos_cenicos: projectData.objetos_cenicos || 'Não especificados',
+                
+                // Módulo 4: Iluminação
+                conceito_iluminacao: projectData.conceito_luz,
+                paleta_cores: projectData.paleta_cores,
+                momentos_luz_especiais: projectData.momentos_luz || 'Não especificados',
+                
+                // Módulo 5: Som
+                conceito_sonoro: projectData.conceito_sonoro,
+                estilo_musical: projectData.estilo_musical || 'Não especificado',
+                sons_ambiente: projectData.sons_ambiente || 'Não especificados',
+                uso_silencio: projectData.silencios || 'Não especificado',
+                
+                // Módulo 6: Movimento e Figurino
+                estilo_movimento: projectData.estilo_movimento,
+                conceito_figurino: projectData.conceito_figurino,
+                figurino_personagens: projectData.figurino_personagens,
+                
+                // Módulo 7: Elementos Técnicos
+                multimidia: projectData.multimidia,
+                maquiagem: projectData.maquiagem,
+                efeitos_especiais: projectData.efeitos_especiais || 'Nenhum',
+                
+                // Módulo 8: Síntese Final
+                experiencia_sensorial: projectData.experiencia_sensorial,
+                imagem_final: projectData.imagem_final,
+                palavras_chave: projectData.tres_palavras
+            };
+            
+            // Mostra modal de processamento
+            mostrarModalProcessamento();
+            
+            // Envia para o webhook do Make.com
+            fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dadosParaEnvio)
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Sucesso no envio
+                    esconderModalProcessamento();
+                    mostrarMensagemSucesso(emailDestino);
+                    
+                    // Limpa os dados locais após sucesso (opcional)
+                    // localStorage.removeItem(STORAGE_KEY);
+                    // projectData = {};
+                } else {
+                    throw new Error('Erro no envio');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                esconderModalProcessamento();
+                
+                // Mostra mensagem de erro mais detalhada
+                alert(`Houve um erro no processamento. 
+
+Possíveis causas:
+- Problema de conexão com a internet
+- Webhook não configurado corretamente
+- Servidor temporariamente indisponível
+
+Por favor, tente novamente em alguns minutos.
+
+Se o problema persistir, entre em contato com o suporte.`);
             });
         }
 
-        // Fechar modal
+        // ===== FUNÇÕES DE MODAL =====
+        function mostrarModalProcessamento() {
+            document.getElementById('processingOverlay').style.display = 'flex';
+        }
+
+        function esconderModalProcessamento() {
+            document.getElementById('processingOverlay').style.display = 'none';
+        }
+
+        function mostrarMensagemSucesso(email) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-sucesso';
+            modal.innerHTML = `
+                <div class="modal-content-sucesso">
+                    <h2>✅ Tudo certo!</h2>
+                    <p>Sua peça teatral está sendo gerada com inteligência artificial.</p>
+                    <p>Em alguns minutos você receberá o documento completo no email:</p>
+                    <p><strong>${email}</strong></p>
+                    <div class="nota-importante">
+                        <strong>Importante:</strong> Verifique também a pasta de spam/lixo eletrônico caso não encontre o email na caixa de entrada.
+                    </div>
+                    <button class="btn btn-success" onclick="fecharModalSucesso()">Entendido</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function fecharModalSucesso() {
+            const modal = document.querySelector('.modal-sucesso');
+            if (modal) {
+                modal.remove();
+            }
+            // Opcionalmente, recarrega a página para novo preenchimento
+            // if (confirm('Deseja criar uma nova peça?')) {
+            //     window.location.reload();
+            // }
+        }
+
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
@@ -1263,200 +1464,15 @@
             document.getElementById('aboutModal').style.display = 'block';
         }
 
-        // Gerar conteúdo formatado
-        function generatePlayContent() {
-            let content = 'PEÇA TEATRAL\n';
-            content += '='.repeat(50) + '\n\n';
-            content += `Título: ${projectData.titulo_provisorio || 'Sem título'}\n`;
-            content += `Data de criação: ${new Date().toLocaleDateString('pt-BR')}\n`;
-            content += `Sistema desenvolvido por Alexandra Moreira\n\n`;
-            content += '='.repeat(50) + '\n\n';
-            
-            modules.forEach((module, index) => {
-                content += `${index + 1}. ${module.title.toUpperCase()}\n`;
-                content += '-'.repeat(30) + '\n\n';
-                
-                module.questions.forEach(question => {
-                    const answer = projectData[question.id];
-                    if (answer && answer.trim()) {
-                        content += `${question.label}\n`;
-                        content += `${answer}\n\n`;
-                    }
-                });
-                
-                content += '\n';
-            });
-            
-            return content;
-        }
-
-        // Mostrar preview do texto
-        function showTextPreview() {
-            const textOutput = document.getElementById('textOutput');
-            const copyButton = document.getElementById('copyButtonContainer');
-            textOutput.textContent = generatePlayContent();
-            textOutput.style.display = 'block';
-            copyButton.style.display = 'block';
-        }
-
-        // Copiar para clipboard
-        function copyToClipboard() {
-            const textOutput = document.getElementById('textOutput');
-            const text = textOutput.textContent;
-            
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(text).then(() => {
-                    alert('Texto copiado com sucesso! Você pode colar em qualquer editor de texto.');
-                }).catch(err => {
-                    console.error('Erro ao copiar:', err);
-                    fallbackCopyToClipboard(text);
-                });
-            } else {
-                fallbackCopyToClipboard(text);
-            }
-        }
-
-        // Método alternativo para copiar
-        function fallbackCopyToClipboard(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.left = "-999999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            
-            try {
-                document.execCommand('copy');
-                alert('Texto copiado com sucesso!');
-            } catch (err) {
-                alert('Erro ao copiar. Por favor, selecione o texto manualmente e copie com Ctrl+C.');
-            }
-            
-            document.body.removeChild(textArea);
-        }
-
-        // Gerar documento de texto
-        function generateTextDocument() {
-            try {
-                const content = generatePlayContent();
-                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-                downloadBlob(blob, `peca_teatral_${projectData.titulo_provisorio || 'documento'}_${new Date().toISOString().split('T')[0]}.txt`);
-                alert('Documento de texto gerado com sucesso!');
-                closeModal('completionModal');
-            } catch (error) {
-                console.error('Erro ao gerar texto:', error);
-                alert('Erro ao gerar documento. Por favor, use a opção de copiar texto.');
-            }
-        }
-
-        // Gerar documento RTF
-        function generateRTFDocument() {
-            try {
-                let rtfContent = '{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\\f0\\fs24 ';
-                rtfContent += '\\qc\\b\\fs36 PEÇA TEATRAL\\b0\\fs24\\par\\par\n';
-                rtfContent += `\\qc\\fs28 ${projectData.titulo_provisorio || 'Sem título'}\\fs24\\par\n`;
-                rtfContent += `\\qc Data: ${new Date().toLocaleDateString('pt-BR')}\\par\n`;
-                rtfContent += '\\qc Sistema desenvolvido por Alexandra Moreira\\par\\par\\par\n';
-                
-                modules.forEach((module, index) => {
-                    rtfContent += `\\b\\fs28 ${index + 1}. ${module.title}\\b0\\fs24\\par\\par\n`;
-                    
-                    module.questions.forEach(question => {
-                        const answer = projectData[question.id];
-                        if (answer && answer.trim()) {
-                            rtfContent += `\\b ${question.label}\\b0\\par\n`;
-                            rtfContent += `${answer.replace(/\n/g, '\\par ')}\\par\\par\n`;
-                        }
-                    });
-                    
-                    rtfContent += '\\page\n';
-                });
-                
-                rtfContent += '}';
-                
-                const blob = new Blob([rtfContent], { type: 'application/rtf' });
-                downloadBlob(blob, `peca_teatral_${projectData.titulo_provisorio || 'documento'}_${new Date().toISOString().split('T')[0]}.rtf`);
-                alert('Documento RTF gerado com sucesso! Este arquivo pode ser aberto no Microsoft Word.');
-                closeModal('completionModal');
-            } catch (error) {
-                console.error('Erro ao gerar RTF:', error);
-                alert('Erro ao gerar RTF. Por favor, use a opção de texto (.txt).');
-            }
-        }
-
-        // Gerar HTML simples
-        function generateSimpleHTML() {
-            try {
-                let htmlContent = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>${projectData.titulo_provisorio || 'Peça Teatral'}</title>
-    <style>
-        body { font-family: Georgia, serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; }
-        h1 { color: #8B0000; text-align: center; }
-        h2 { color: #8B0000; margin-top: 40px; }
-        h3 { color: #444; margin-top: 20px; }
-        .info { text-align: center; color: #666; margin-bottom: 40px; }
-        .content { margin-bottom: 20px; }
-    </style>
-</head>
-<body>
-    <h1>PEÇA TEATRAL</h1>
-    <h2>${projectData.titulo_provisorio || 'Sem título'}</h2>
-    <div class="info">
-        <p>Data de criação: ${new Date().toLocaleDateString('pt-BR')}</p>
-        <p>Sistema desenvolvido por Alexandra Moreira</p>
-    </div>
-    <hr>
-`;
-                
-                modules.forEach((module, index) => {
-                    htmlContent += `<h2>${index + 1}. ${module.title}</h2>\n`;
-                    
-                    module.questions.forEach(question => {
-                        const answer = projectData[question.id];
-                        if (answer && answer.trim()) {
-                            htmlContent += `<h3>${question.label}</h3>\n`;
-                            htmlContent += `<div class="content">${answer.replace(/\n/g, '<br>')}</div>\n`;
-                        }
-                    });
-                });
-                
-                htmlContent += '</body></html>';
-                
-                const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-                downloadBlob(blob, `peca_teatral_${projectData.titulo_provisorio || 'documento'}_${new Date().toISOString().split('T')[0]}.html`);
-                alert('Documento HTML gerado com sucesso! Abra no navegador para visualizar.');
-                closeModal('completionModal');
-            } catch (error) {
-                console.error('Erro ao gerar HTML:', error);
-                alert('Erro ao gerar HTML. Por favor, use outra opção.');
-            }
-        }
-
-        // Função auxiliar para download
-        function downloadBlob(blob, filename) {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(url), 100);
-        }
-
-        // Fechar modal ao clicar fora
+        // ===== EVENT LISTENERS =====
+        // Fecha modais ao clicar fora deles
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
             }
         }
 
-        // Aviso ao sair
+        // Aviso ao sair da página com dados não salvos
         window.addEventListener('beforeunload', function (e) {
             const progress = document.getElementById('progressBar').style.width;
             if (progress !== '0%' && progress !== '100%') {
@@ -1465,7 +1481,7 @@
             }
         });
 
-        // Inicializar
+        // ===== INICIALIZAÇÃO DO SISTEMA =====
         window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
